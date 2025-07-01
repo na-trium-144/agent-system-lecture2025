@@ -2,6 +2,9 @@ import argparse
 import os
 import pickle
 import shutil
+import math
+import yaml
+import torch
 
 from go2_env import Go2Env
 from rsl_rl.runners import OnPolicyRunner
@@ -58,35 +61,27 @@ def get_train_cfg(exp_name, max_iterations):
 
 def get_cfgs():
     env_cfg = {
-        "num_actions": 12,
+        "num_actions": 8,
         # joint/link names
         "default_joint_angles": {  # [rad]
-            "FL_hip_joint": 0.0,
-            "FR_hip_joint": 0.0,
-            "RL_hip_joint": 0.0,
-            "RR_hip_joint": 0.0,
-            "FL_thigh_joint": 0.8,
-            "FR_thigh_joint": 0.8,
-            "RL_thigh_joint": 1.0,
-            "RR_thigh_joint": 1.0,
-            "FL_calf_joint": -1.5,
-            "FR_calf_joint": -1.5,
-            "RL_calf_joint": -1.5,
-            "RR_calf_joint": -1.5,
+            "leg0_joint_1": -math.pi / 6,
+            "leg0_joint_2": math.pi / 3,
+            "leg1_joint_1": -math.pi / 6,
+            "leg1_joint_2": math.pi / 3,
+            "leg2_joint_1": -math.pi / 6,
+            "leg2_joint_2": math.pi / 3,
+            "leg3_joint_1": -math.pi / 6,
+            "leg3_joint_2": math.pi / 3,
         },
         "dof_names": [
-            "FR_hip_joint",
-            "FR_thigh_joint",
-            "FR_calf_joint",
-            "FL_hip_joint",
-            "FL_thigh_joint",
-            "FL_calf_joint",
-            "RR_hip_joint",
-            "RR_thigh_joint",
-            "RR_calf_joint",
-            "RL_hip_joint",
-            "RL_thigh_joint",
-            "RL_calf_joint",
+            "leg0_joint_1",
+            "leg0_joint_2",
+            "leg1_joint_1",
+            "leg1_joint_2",
+            "leg2_joint_1",
+            "leg2_joint_2",
+            "leg3_joint_1",
+            "leg3_joint_2",
         ],
         # PD
         "kp": 20.0,
@@ -104,7 +99,7 @@ def get_cfgs():
         "clip_actions": 100.0,
     }
     obs_cfg = {
-        "num_obs": 45,
+        "num_obs": 33,
         "obs_scales": {
             "lin_vel": 2.0,
             "ang_vel": 0.25,
@@ -127,7 +122,7 @@ def get_cfgs():
     }
     command_cfg = {
         "num_commands": 3,
-        "lin_vel_x_range": [0.5, 0.5],
+        "lin_vel_x_range": [0, 1],
         "lin_vel_y_range": [0, 0],
         "ang_vel_range": [0, 0],
     }
@@ -168,8 +163,35 @@ def main():
         open(f"{log_dir}/cfgs.pkl", "wb"),
     )
 
+    ##### dump_cfgs_to_yaml
+
+    all_cfgs = {
+        "env_cfg": env_cfg,
+        "obs_cfg": obs_cfg,
+        "reward_cfg": reward_cfg,
+        "command_cfg": command_cfg,
+        "train_cfg": train_cfg,
+    }
+
+    def to_serializable(obj):
+        if isinstance(obj, torch.Tensor):
+            return obj.tolist()
+        if isinstance(obj, dict):
+            return {k: to_serializable(v) for k, v in obj.items()}
+        if isinstance(obj, (list, tuple)):
+            return [to_serializable(v) for v in obj]
+        return obj
+
+    all_cfgs = to_serializable(all_cfgs)
+
+    with open(f"{log_dir}/cfgs.yaml", "w") as f:
+        yaml.safe_dump(all_cfgs, f, sort_keys=False)
+
+    #####
+
     runner.learn(num_learning_iterations=args.max_iterations, init_at_random_ep_len=True)
 
+    ##### dump_training_data をここにコピペするとなぜかPYOPENGL_PLATFORMを指定しているにも関わらず真っ暗になる
 
 if __name__ == "__main__":
     main()

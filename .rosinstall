@@ -8,8 +8,9 @@
 #     uri: https://github.com/choreonoid/choreonoid_ros.git
 - git:
     local-name: lecture2025
-    uri: https://github.com/agent-system/lecture2025.git
+    # uri: https://github.com/agent-system/lecture2025.git
     # uri: git@github.com:agent-system/lecture2025.git
+    uri: https://github.com/na-trium-144/agent-system-lecture2025.git
 - git:
     local-name: choreonoid/ext/vnoid
     uri: https://github.com/ytazz/vnoid.git

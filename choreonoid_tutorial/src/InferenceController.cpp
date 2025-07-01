@@ -80,7 +80,13 @@ public:
         command = Vector3d(0.0, 0.0, 0.0);
 
         // find the cfgs file
-        fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/inference_target");
+        const char *inference_target_path_str = std::getenv("TARGET_PATH");
+        if(!inference_target_path_str){
+            oss << " TARGET_PATH environment variable is not set!!!";
+            MessageView::instance()->putln(oss.str());
+            return false;
+        }
+        fs::path inference_target_path = fs::path(inference_target_path_str);
         fs::path cfgs_path = inference_target_path / fs::path("cfgs.yaml");
         if (!fs::exists(cfgs_path)) {
             oss << cfgs_path << " is not found!!!";
