@@ -218,9 +218,9 @@ class Go2Env:
         self.reset_buf[envs_idx] = True
 
         # randomization
-        # self.randomize_friction()
-        # self.randomize_pd_gains()
-        # self.randomize_armature()
+        self.randomize_friction()
+        self.randomize_pd_gains()
+        self.randomize_armature()
 
         # fill extras
         self.extras["episode"] = {}

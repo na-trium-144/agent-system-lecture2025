@@ -9,9 +9,11 @@ python ./hoge_model.py
 source ~/ros/agent_system_ws/devel/setup.bash
 source ~/genesis_ws/genesis_env/bin/activate
 export PYOPENGL_PLATFORM=glx
-PYTHONPATH= python ./genesis/go2_train.py
+export PYTHONPATH=
+python ./genesis/go2_train.py
 PYTHONPATH=`pwd`/genesis python ./inference_tutorial/scripts/dump_training_data.py -l ./logs/go2-walking/test --ckpt 100
-PYTHONPATH= python ./go2_eval.py
+tensorboard --logdir logs/go2-walking/test/ --host 0.0.0.0
+python ./go2_eval.py
 ```
 
 ```sh

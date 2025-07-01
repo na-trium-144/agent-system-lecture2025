@@ -103,8 +103,11 @@ public:
         auto command_cfg = root->findMapping("command_cfg");
 
         // env_cfg
-        P_gain = env_cfg->get("kp", 20);
-        D_gain = env_cfg->get("kd", 0.5);
+        // P_gain = env_cfg->get("kp", 20);
+        // D_gain = env_cfg->get("kd", 0.5);
+        // でっちあげ
+        P_gain = 30;
+        D_gain = 1.2;
 
         resample_interval_steps = static_cast<int>(std::round(env_cfg->get("resampling_time_s", 4.0) / dt));
 
