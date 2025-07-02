@@ -1,6 +1,7 @@
 import torch
 import math
 import genesis as gs
+import random
 from genesis.utils.geom import quat_to_xyz, transform_by_quat, inv_quat, transform_quat_by_quat
 from os.path import join, dirname
 
@@ -102,6 +103,7 @@ class Go2Env:
         self.last_actions = torch.zeros_like(self.actions)
         self.dof_pos = torch.zeros_like(self.actions)
         self.dof_vel = torch.zeros_like(self.actions)
+        self.dof_force = torch.zeros_like(self.actions)
         self.last_dof_vel = torch.zeros_like(self.actions)
         self.base_pos = torch.zeros((self.num_envs, 3), device=self.device, dtype=gs.tc_float)
         self.base_quat = torch.zeros((self.num_envs, 4), device=self.device, dtype=gs.tc_float)
@@ -122,6 +124,10 @@ class Go2Env:
         exec_actions = self.last_actions if self.simulate_action_latency else self.actions
         target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
         self.robot.control_dofs_position(target_dof_pos, self.motor_dofs)
+        if random.random() < 0.01:
+            random_pos = self.robot.get_pos()[...]
+            random_pos[:, 2] += gs_rand_float(*self.env_cfg["random_move_z"], (len(random_pos),), self.device)
+            self.robot.set_pos(random_pos, zero_velocity=False)
         self.scene.step()
 
         # update buffers
@@ -137,6 +143,7 @@ class Go2Env:
         self.projected_gravity = transform_by_quat(self.global_gravity, inv_base_quat)
         self.dof_pos[:] = self.robot.get_dofs_position(self.motor_dofs)
         self.dof_vel[:] = self.robot.get_dofs_velocity(self.motor_dofs)
+        self.dof_force[:] = self.robot.get_dofs_force(self.motor_dofs)
 
         # resample commands
         envs_idx = (
@@ -172,6 +179,7 @@ class Go2Env:
                 self.commands * self.commands_scale,  # 3
                 (self.dof_pos - self.default_dof_pos) * self.obs_scales["dof_pos"],  # 12
                 self.dof_vel * self.obs_scales["dof_vel"],  # 12
+                self.dof_force * self.obs_scales["dof_force"],  # 12
                 self.actions,  # 12
             ],
             axis=-1,
@@ -261,8 +269,8 @@ class Go2Env:
         return torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1)
 
     def _reward_base_height(self):
-        # Penalize base height away from target
-        return torch.square(self.base_pos[:, 2] - self.reward_cfg["base_height_target"])
+        # Penalize base height lower than target
+        return torch.square(self.base_pos[:, 2] - self.reward_cfg["base_height_target"]) * (self.base_pos[:, 2] < self.reward_cfg["base_height_target"])
 
     # ------------ randomization ----------------
     def randomize_link_properties(self):

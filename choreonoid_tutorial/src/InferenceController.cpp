@@ -40,6 +40,7 @@ class InferenceController1 : public SimpleController
     double lin_vel_scale;
     double dof_pos_scale;
     double dof_vel_scale;
+    double dof_force_scale;
     Vector3 command_scale;
 
     // Command resampling
@@ -49,12 +50,6 @@ class InferenceController1 : public SimpleController
     Vector2d ang_vel_range;
     size_t resample_interval_steps;
     size_t step_count = 0;
-
-    // 乱数生成器
-    std::mt19937 rng;
-    std::uniform_real_distribution<double> dist_lin_x;
-    std::uniform_real_distribution<double> dist_lin_y;
-    std::uniform_real_distribution<double> dist_ang;
 
 public:
     virtual bool initialize(SimpleControllerIO* io) override
@@ -72,7 +67,7 @@ public:
         for(auto joint : ioBody->joints()) {
             joint->setActuationMode(JointTorque);
             io->enableOutput(joint, JointTorque);
-            io->enableInput(joint, JointAngle | JointVelocity);
+            io->enableInput(joint, JointAngle | JointVelocity | JointTorque);
         }
         io->enableInput(ioBody->rootLink(), LinkPosition | LinkTwist);
 
@@ -141,6 +136,7 @@ public:
         lin_vel_scale = obs_cfg->findMapping("obs_scales")->get("lin_vel", 1.0);
         dof_pos_scale = obs_cfg->findMapping("obs_scales")->get("dof_pos", 1.0);
         dof_vel_scale = obs_cfg->findMapping("obs_scales")->get("dof_vel", 1.0);
+        dof_force_scale = obs_cfg->findMapping("obs_scales")->get("dof_force", 1.0);
 
         command_scale[0] = lin_vel_scale;
         command_scale[1] = lin_vel_scale;
@@ -153,14 +149,6 @@ public:
         lin_vel_y_range = Vector2(range_listing->at(0)->toDouble(), range_listing->at(1)->toDouble());
         range_listing = command_cfg->findListing("ang_vel_range");
         ang_vel_range = Vector2(range_listing->at(0)->toDouble(), range_listing->at(1)->toDouble());
-
-        // モータDOFのindex取得
-
-        // 乱数初期化
-        rng.seed(std::random_device{}());
-        dist_lin_x = std::uniform_real_distribution<double>(lin_vel_x_range[0], lin_vel_x_range[1]);
-        dist_lin_y = std::uniform_real_distribution<double>(lin_vel_y_range[0], lin_vel_y_range[1]);
-        dist_ang = std::uniform_real_distribution<double>(ang_vel_range[0], ang_vel_range[1]);
 
         // load the network model
         fs::path model_path = inference_target_path / fs::path("policy_traced.pt");
@@ -178,7 +166,7 @@ public:
         return true;
     }
 
-    bool inference(VectorXd& target_dof_pos, const Vector3d& angular_velocity, const Vector3d& projected_gravity, const VectorXd& joint_pos, const VectorXd& joint_vel) {
+    bool inference(VectorXd& target_dof_pos, const Vector3d& angular_velocity, const Vector3d& projected_gravity, const VectorXd& joint_pos, const VectorXd& joint_vel, const VectorXd& joint_force) {
         try {
             // observation vector
             std::vector<float> obs_vec;
@@ -187,6 +175,7 @@ public:
             for(int i=0; i<3; ++i) obs_vec.push_back(command[i] * command_scale[i]);
             for(int i=0; i<num_actions; ++i) obs_vec.push_back((joint_pos[i] - default_dof_pos[i]) * dof_pos_scale);
             for(int i=0; i<num_actions; ++i) obs_vec.push_back(joint_vel[i] * dof_vel_scale);
+            for(int i=0; i<num_actions; ++i) obs_vec.push_back(joint_force[i] * dof_force_scale);
             for(int i=0; i<num_actions; ++i) obs_vec.push_back(last_action[i]);
 
             // auto input = torch::from_blob(obs_vec.data(), {1, (long)obs_vec.size()}, torch::kFloat32).to(torch::kCUDA);
@@ -218,12 +207,13 @@ public:
     virtual bool control() override
     {
 
-        if(step_count % resample_interval_steps == 0){
-            command[0] = dist_lin_x(rng);
-            command[1] = dist_lin_y(rng);
-            command[2] = dist_ang(rng);
-            std::cout << "command velocity:" << command.transpose() << std::endl;
-        }
+        double target_x = 6, target_y = 0.8;
+        double diff_x = target_x - ioBody->rootLink()->translation()[0];
+        double diff_y = target_y - ioBody->rootLink()->translation()[1];
+        command[0] = std::clamp(diff_x, lin_vel_x_range[0], lin_vel_x_range[1]);
+        command[1] = std::clamp(diff_y, lin_vel_y_range[0], lin_vel_y_range[1]);
+        command[2] = std::clamp(std::atan2(diff_y, diff_x), ang_vel_range[0], ang_vel_range[1]);
+        std::cout << "command velocity:" << command.transpose() << std::endl;
 
         // get current states
         const auto rootLink = ioBody->rootLink();
@@ -231,16 +221,17 @@ public:
         Vector3 angular_velocity = root_coord.linear().transpose() * rootLink->w();
         Vector3 projected_gravity = root_coord.linear().transpose() * global_gravity;
 
-        VectorXd joint_pos(num_actions), joint_vel(num_actions);
+        VectorXd joint_pos(num_actions), joint_vel(num_actions), joint_force(num_actions);
         for(int i=0; i<num_actions; ++i){
             auto joint = ioBody->joint(motor_dof_names[i]);
             joint_pos[i] = joint->q();
             joint_vel[i] = joint->dq();
+            joint_force[i] = joint->u(); // todo: たぶん力センサーを別で用意しないといけない?
         }
 
         // inference
         if (step_count % inference_interval_steps == 0) {
-            inference(target_dof_pos, angular_velocity, projected_gravity, joint_pos, joint_vel);
+            inference(target_dof_pos, angular_velocity, projected_gravity, joint_pos, joint_vel, joint_force);
             // target_dof_vel = (target_dof_pos - target_dof_pos_prev) / inference_dt;
             // target_dof_pos_prev = target_dof_pos;
         }

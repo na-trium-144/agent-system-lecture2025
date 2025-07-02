@@ -9,20 +9,24 @@ leg_mass_1 = 1
 leg_size_2 = 0.2
 leg_mass_2 = 1
 leg_positions = [
-    "0.2 0.2",
-    "0.2 -0.2",
-    "-0.3 0.2",
-    "-0.3 -0.2",
+    "0.15 0.1",
+    "0.15 -0.1",
+    "-0.2 0.1",
+    "-0.2 -0.1",
 ]
+base_mass = 20 - (leg_mass_1 + leg_mass_2) * len(leg_positions)
+base_x = 0.5
+base_y = 0.4
+base_z = 0.2
 
 base_link = E.link(
     E.inertial(
         E.origin(xyz="0 0 0", rpy="0 0 0"),
-        E.mass(value="10"),
+        E.mass(value=str(base_mass)),
         E.inertia(
-            ixx=str(10 * (0.5**2 + 0.2**2) / 12),
-            iyy=str(10 * (0.7**2 + 0.2**2) / 12),
-            izz=str(10 * (0.7**2 + 0.5**2) / 12),
+            ixx=str(base_mass * (base_y**2 + base_z**2) / 12),
+            iyy=str(base_mass * (base_x**2 + base_z**2) / 12),
+            izz=str(base_mass * (base_x**2 + base_y**2) / 12),
             ixy="0",
             ixz="0",
             iyz="0",
@@ -30,7 +34,7 @@ base_link = E.link(
     ),
     E.visual(
         E.geometry(
-            E.box(size="0.7 0.5 0.2")
+            E.box(size=f"{base_x} {base_y} {base_z}")
         ),
         E.material(
             E.color(rgba=color + " 0.5"),
@@ -63,7 +67,7 @@ head_elements = [
     E.link(
         E.visual(
             E.geometry(
-                E.box(size="0.2 0.3 0.15")
+                E.box(size="0.2 0.25 0.15")
             ),
             E.material(
                 E.color(rgba=color + " 0.5"),

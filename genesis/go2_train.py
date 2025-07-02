@@ -92,6 +92,7 @@ def get_cfgs():
         # base pose
         "base_init_pos": [0.0, 0.0, 0.42],
         "base_init_quat": [1.0, 0.0, 0.0, 0.0],
+        "random_move_z": [0, 0.2],
         "episode_length_s": 20.0,
         "resampling_time_s": 4.0,
         "action_scale": 0.25,
@@ -99,12 +100,13 @@ def get_cfgs():
         "clip_actions": 100.0,
     }
     obs_cfg = {
-        "num_obs": 33,
+        "num_obs": 41,
         "obs_scales": {
             "lin_vel": 2.0,
             "ang_vel": 0.25,
             "dof_pos": 1.0,
             "dof_vel": 0.05,
+            "dof_force": 0.1,
         },
     }
     reward_cfg = {

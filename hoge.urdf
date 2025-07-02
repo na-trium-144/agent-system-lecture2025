@@ -2,12 +2,12 @@
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="10"/>
-      <inertia ixx="0.2416666666666667" iyy="0.4416666666666666" izz="0.6166666666666667" ixy="0" ixz="0" iyz="0"/>
+      <mass value="12"/>
+      <inertia ixx="0.20000000000000004" iyy="0.29000000000000004" izz="0.41" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
-        <box size="0.7 0.5 0.2"/>
+        <box size="0.5 0.4 0.2"/>
       </geometry>
       <material name="a">
         <color rgba="0.8 0.7 0.5 0.5"/>
@@ -33,7 +33,7 @@
   <link name="head_link">
     <visual>
       <geometry>
-        <box size="0.2 0.3 0.15"/>
+        <box size="0.2 0.25 0.15"/>
       </geometry>
       <material name="a">
         <color rgba="0.8 0.7 0.5 0.5"/>
@@ -119,7 +119,7 @@
   <joint name="leg0_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg0_link_1"/>
-    <origin xyz="0.2 0.2 0" rpy="0 0 0"/>
+    <origin xyz="0.15 0.1 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg0_joint_2" type="continuous">
@@ -169,7 +169,7 @@
   <joint name="leg1_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg1_link_1"/>
-    <origin xyz="0.2 -0.2 0" rpy="0 0 0"/>
+    <origin xyz="0.15 -0.1 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg1_joint_2" type="continuous">
@@ -219,7 +219,7 @@
   <joint name="leg2_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg2_link_1"/>
-    <origin xyz="-0.3 0.2 0" rpy="0 0 0"/>
+    <origin xyz="-0.2 0.1 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg2_joint_2" type="continuous">
@@ -269,7 +269,7 @@
   <joint name="leg3_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg3_link_1"/>
-    <origin xyz="-0.3 -0.2 0" rpy="0 0 0"/>
+    <origin xyz="-0.2 -0.1 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg3_joint_2" type="continuous">
