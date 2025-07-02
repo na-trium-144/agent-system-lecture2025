@@ -13,7 +13,7 @@ export PYTHONPATH=
 python ./genesis/go2_train.py
 PYTHONPATH=`pwd`/genesis python ./inference_tutorial/scripts/dump_training_data.py -l ./logs/go2-walking/test --ckpt 100
 tensorboard --logdir logs/go2-walking/test/ --host 0.0.0.0
-python ./go2_eval.py
+python ./genesis/go2_eval.py
 ```
 
 ```sh

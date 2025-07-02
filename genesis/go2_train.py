@@ -50,7 +50,7 @@ def get_train_cfg(exp_name, max_iterations):
             "resume_path": None,
             "run_name": "",
             "runner_class_name": "runner_class_name",
-            "save_interval": 100,
+            "save_interval": 10,
         },
         "runner_class_name": "OnPolicyRunner",
         "seed": 1,
@@ -122,9 +122,9 @@ def get_cfgs():
     }
     command_cfg = {
         "num_commands": 3,
-        "lin_vel_x_range": [0, 1],
-        "lin_vel_y_range": [0, 0],
-        "ang_vel_range": [0, 0],
+        "lin_vel_x_range": [-1, 1],
+        "lin_vel_y_range": [-1, 1],
+        "ang_vel_range": [-4, 4],
     }
 
     return env_cfg, obs_cfg, reward_cfg, command_cfg
@@ -137,7 +137,7 @@ def main():
     parser.add_argument("-B", "--num_envs", type=int, default=4096)
     parser.add_argument("-p", "--param_name", type=str, default="test")
     parser.add_argument("-s", "--substeps", type=int, default=2)
-    parser.add_argument("--max_iterations", type=int, default=100)
+    parser.add_argument("--max_iterations", type=int, default=300)
     args = parser.parse_args()
 
     gs.init(logging_level="warning")

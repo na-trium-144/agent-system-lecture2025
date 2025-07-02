@@ -14,7 +14,7 @@ def main():
     parser.add_argument("-e", "--exp_name", type=str, default="go2-walking")
     parser.add_argument("-l", "--log_dir", type=str, default="logs")
     parser.add_argument("-p", "--param_name", type=str, default="test")
-    parser.add_argument("--ckpt", type=int, default=100)
+    parser.add_argument("-c", "--ckpt", type=int, default=100)
     args = parser.parse_args()
 
     gs.init()
