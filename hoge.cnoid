@@ -20,18 +20,17 @@ items:
           name: "hoge"
           plugin: Body
           class: BodyItem
-          is_selected: true
           is_checked: true
           data:
             file: "hoge.urdf"
             format: URDF
-            rootPosition: [ 0, 0.806369398, 0.5 ]
+            rootPosition: [ 0, 0, 0.5 ]
             rootAttitude: [
               1, 0, 0,
               0, 1, 0,
               0, 0, 1 ]
             jointDisplacements: [ 0, 0, 0, 0, 0, 0, 0, 0 ]
-            initialRootPosition: [ 0, 0.806369398, 0.5 ]
+            initialRootPosition: [ 0, 0, 0.5 ]
             initialRootAttitude: [
               1, 0, 0,
               0, 1, 0,
@@ -56,10 +55,11 @@ items:
                 reloading: false
                 export_symbols: false
         -
-          id: 5
+          id: 4
           name: "HVAC2023_athletics_field"
           plugin: Body
           class: BodyItem
+          is_selected: true
           is_checked: true
           data:
             file: "../choreonoid/ext/vnoid/model/field2023/field2023_athletics.body"
@@ -83,7 +83,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 7
+          id: 5
           name: "AISTSimulator"
           plugin: Body
           class: AISTSimulatorItem
@@ -100,7 +100,6 @@ items:
             record_collision_data: false
             controller_options: ""
             block_scene_view_edit_mode: false
-            time_sync_items: [ 4, 6 ]
             dynamicsMode: "Forward dynamics"
             integrationMode: semi-implicit_euler
             gravity: [ 0, 0, -9.80665 ]
@@ -117,7 +116,7 @@ items:
             oldAccelSensorMode: false
           children:
             -
-              id: 8
+              id: 6
               name: "WorldLogFile"
               plugin: Body
               class: WorldLogFileItem
@@ -138,7 +137,7 @@ views:
     class: ItemTreeView
     mounted: true
     state:
-      expanded: [ 1, 2, 3, 5, 7 ]
+      expanded: [ 1, 2, 3, 4, 5 ]
   -
     id: 2
     plugin: Base
@@ -170,9 +169,9 @@ views:
         -
           camera: [ System, Perspective ]
           isCurrent: true
-          eye: [ 7.5324, 9.06134, 3.80959 ]
-          direction: [ -0.353744, -0.867601, -0.349477 ]
-          up: [ -0.131945, -0.323612, 0.936945 ]
+          eye: [ 17.8448, 16.9481, 11.9118 ]
+          direction: [ -0.393689, -0.780533, -0.485568 ]
+          up: [ -0.218672, -0.433542, 0.874199 ]
         -
           camera: [ System, Orthographic ]
           orthoHeight: 20
@@ -276,8 +275,8 @@ toolbars:
     lazyCollisionDetectionMode: true
 Body:
   "BodySelectionManager":
-    current_body_item: 2
-    current_link: "base_link"
+    current_body_item: 4
+    current_link: "Base"
   "KinematicFaultChecker":
     checkJointPositions: true
     angleMargin: 0
@@ -295,7 +294,7 @@ Body:
         show_cm_projection: false
         show_zmp: false
       -
-        body_item: 5
+        body_item: 4
         show_cm: false
         show_cm_projection: false
         show_zmp: false
@@ -311,17 +310,17 @@ viewAreas:
     contents:
       type: splitter
       orientation: horizontal
-      sizes: [ 1454, 462 ]
+      sizes: [ 1163, 369 ]
       children:
         -
           type: splitter
           orientation: horizontal
-          sizes: [ 376, 1074 ]
+          sizes: [ 301, 858 ]
           children:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 450, 450 ]
+              sizes: [ 416, 416 ]
               children:
                 -
                   type: pane
@@ -333,7 +332,7 @@ viewAreas:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 675, 225 ]
+              sizes: [ 624, 208 ]
               children:
                 -
                   type: pane
@@ -345,7 +344,7 @@ viewAreas:
         -
           type: splitter
           orientation: vertical
-          sizes: [ 177, 723 ]
+          sizes: [ 194, 638 ]
           children:
             -
               type: pane
@@ -353,7 +352,7 @@ viewAreas:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 257, 462 ]
+              sizes: [ 277, 357 ]
               children:
                 -
                   type: pane

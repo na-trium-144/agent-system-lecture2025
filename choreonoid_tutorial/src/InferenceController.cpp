@@ -44,6 +44,7 @@ class InferenceController1 : public SimpleController
     Vector3 command_scale;
 
     // Command resampling
+    int phase = 0;
     Vector3d command;
     Vector2d lin_vel_x_range;
     Vector2d lin_vel_y_range;
@@ -73,6 +74,7 @@ public:
 
         // command
         command = Vector3d(0.0, 0.0, 0.0);
+        phase = 0;
 
         // find the cfgs file
         const char *inference_target_path_str = std::getenv("TARGET_PATH");
@@ -206,13 +208,44 @@ public:
 
     virtual bool control() override
     {
-
-        double target_x = 6, target_y = 0.8;
-        double diff_x = target_x - ioBody->rootLink()->translation()[0];
-        double diff_y = target_y - ioBody->rootLink()->translation()[1];
-        command[0] = std::clamp(diff_x, lin_vel_x_range[0], lin_vel_x_range[1]);
-        command[1] = std::clamp(diff_y, lin_vel_y_range[0], lin_vel_y_range[1]);
-        command[2] = std::clamp(std::atan2(diff_y, diff_x), ang_vel_range[0], ang_vel_range[1]);
+        double actual_x = ioBody->rootLink()->translation()[0];
+        double actual_y = ioBody->rootLink()->translation()[1];
+        Vector3d actual_rot_vec = (ioBody->rootLink()->rotation() * Vector3d{1, 0, 0});
+        double actual_yaw = std::atan2(actual_rot_vec[1], actual_rot_vec[0]);
+        double target_x, target_y, threshold = 0.1, max_vel = 0.5;
+        switch(phase){
+        case 0:
+            target_x = 0;
+            target_y = 0.97;
+            break;
+        case 1:
+            target_x = 5.5;
+            target_y = 0.97;
+            break;
+        case 2:
+            target_x = 6.4;
+            target_y = 0.97;
+            threshold = 0.01;
+            max_vel = 0.2;
+            break;
+        case 3:
+        default:
+            target_x = 6.98;
+            target_y = 0.97;
+            threshold = 0.01;
+            max_vel = 0.2;
+            break;
+        }
+        double diff_x = target_x - actual_x;
+        double diff_y = target_y - actual_y;
+        double diff_yaw = std::atan2(diff_y, diff_x) - actual_yaw;
+        if(phase < 3 && std::abs(diff_x) < threshold && std::abs(diff_y) < threshold){
+            phase++;
+        }
+        // command[0] = std::clamp(diff_x, lin_vel_x_range[0], lin_vel_x_range[1]);
+        command[0] = std::clamp(diff_x, -max_vel, max_vel);
+        command[1] = std::clamp(diff_y, -max_vel, max_vel);
+        command[2] = std::clamp(diff_yaw, ang_vel_range[0], ang_vel_range[1]);
         std::cout << "command velocity:" << command.transpose() << std::endl;
 
         // get current states
