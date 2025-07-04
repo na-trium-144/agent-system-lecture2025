@@ -6,10 +6,10 @@ E = lxml.builder.ElementMaker()
 color = "0.8 0.8 0.8"
 alpha = " 0.7"
 leg_size_1 = 0.2
-leg_mass_1 = 1
+leg_mass_1 = 0.1
 leg_size_2 = 0.25
-leg_mass_2 = 1
-leg_mass_3 = 0.3
+leg_mass_2 = 0.1
+leg_mass_3 = 0.03
 leg_positions = [
     "0.1 0.08",
     "0.1 -0.08",
@@ -48,6 +48,11 @@ base_link = E.link(
 )
 head_elements = [
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.box(size="0.2 0.2 0.2")),
             E.material(
@@ -66,6 +71,11 @@ head_elements = [
         type="fixed",
     ),
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.box(size="0.1 0.1 0.05")),
             E.material(
@@ -84,6 +94,11 @@ head_elements = [
         type="fixed",
     ),
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.box(size="0.05 0.1 0.02")),
             E.material(
@@ -102,6 +117,11 @@ head_elements = [
         type="fixed",
     ),
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.box(size="0.05 0.1 0.1")),
             E.material(
@@ -120,6 +140,11 @@ head_elements = [
         type="fixed",
     ),
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.box(size="0.05 0.1 0.1")),
             E.material(
@@ -138,6 +163,11 @@ head_elements = [
         type="fixed",
     ),
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.box(size="0.1 0.1 0.05")),
             E.material(
@@ -163,6 +193,11 @@ eyes_distance = 0.1
 
 head_elements += [
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.cylinder(length=str(eyes_length), radius=str(eyes_radius))),
             E.material(
@@ -181,6 +216,11 @@ head_elements += [
         type="fixed",
     ),
     E.link(
+        E.inertial(
+            E.origin(xyz="0 0 0", rpy="0 0 0"),
+            E.mass(value="0.001"),
+            E.inertia(ixx="0",iyy="0",izz="0",ixy="0",ixz="0",iyz="0"),
+        ),
         E.visual(
             E.geometry(E.cylinder(length=str(eyes_length), radius=str(eyes_radius))),
             E.material(
