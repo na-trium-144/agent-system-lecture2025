@@ -42,6 +42,7 @@ def main():
         while True:
             actions = policy(obs)
             obs, _, rews, dones, infos = env.step(actions)
+            print("command: ", env.commands)
 
 
 if __name__ == "__main__":

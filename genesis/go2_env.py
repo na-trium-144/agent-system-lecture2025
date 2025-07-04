@@ -115,16 +115,17 @@ class Go2Env:
         self.extras = dict()  # extra information for logging
 
     def _resample_commands(self, envs_idx):
-        self.commands[envs_idx, 0] = gs_rand_float(*self.command_cfg["lin_vel_x_range"], (len(envs_idx),), self.device)
-        self.commands[envs_idx, 1] = gs_rand_float(*self.command_cfg["lin_vel_y_range"], (len(envs_idx),), self.device)
+        # 回転のコマンドが大きい場合は並進のコマンドは小さく
         self.commands[envs_idx, 2] = gs_rand_float(*self.command_cfg["ang_vel_range"], (len(envs_idx),), self.device)
+        self.commands[envs_idx, 0] = gs_rand_float(*self.command_cfg["lin_vel_x_range"], (len(envs_idx),), self.device) / (1 + 10 * self.commands[envs_idx, 2].abs())
+        self.commands[envs_idx, 1] = gs_rand_float(*self.command_cfg["lin_vel_y_range"], (len(envs_idx),), self.device) / (1 + 10 * self.commands[envs_idx, 2].abs())
 
     def step(self, actions):
         self.actions = torch.clip(actions, -self.env_cfg["clip_actions"], self.env_cfg["clip_actions"])
         exec_actions = self.last_actions if self.simulate_action_latency else self.actions
         target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
         self.robot.control_dofs_position(target_dof_pos, self.motor_dofs)
-        if random.random() < 0.01:
+        if random.random() < 0.001:
             random_pos = self.robot.get_pos()[...]
             random_pos[:, 2] += gs_rand_float(*self.env_cfg["random_move_z"], (len(random_pos),), self.device)
             self.robot.set_pos(random_pos, zero_velocity=False)
@@ -296,8 +297,8 @@ class Go2Env:
     def randomize_pd_gains(self):
         # pd gains of the joint control
         num_dofs = self.robot.n_dofs
-        kp_min, kp_max = 18.0, 30.0
-        kv_min, kv_max = 0.7, 1.2
+        kp_min, kp_max = 5.0, 40.0
+        kv_min, kv_max = 0.2, 1.5
         kp = torch.rand(num_dofs, device=self.device) * (kp_max - kp_min) + kp_min
         kv = torch.rand(num_dofs, device=self.device) * (kv_max - kv_min) + kv_min
         self.robot.set_dofs_kp(kp)

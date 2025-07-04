@@ -243,9 +243,9 @@ public:
         if(phase < 3 && std::abs(diff_x) < threshold && std::abs(diff_y) < threshold){
             phase++;
         }
-        command[0] = std::clamp(target_lin, lin_vel_x_range[0]*0.8, lin_vel_x_range[1]*0.8);
-        command[1] = std::clamp(0.0, lin_vel_y_range[0]*0.8, lin_vel_y_range[1]*0.8);
         command[2] = std::clamp(target_yaw - actual_yaw, ang_vel_range[0]*0.8, ang_vel_range[1]*0.8);
+        command[0] = std::clamp(target_lin / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*0.8, lin_vel_x_range[1]*0.8);
+        command[1] = std::clamp(0.0, lin_vel_y_range[0]*0.8, lin_vel_y_range[1]*0.8);
         std::cout << "command velocity:" << command.transpose() << std::endl;
         // MessageView::instance()->putln(oss.str());
 
