@@ -72,8 +72,9 @@ class Go2Env:
         self.motor_dofs = [self.robot.get_joint(name).dof_idx_local for name in self.env_cfg["dof_names"]]
 
         # PD control parameters
-        self.robot.set_dofs_kp([self.env_cfg["kp"]] * self.num_actions, self.motor_dofs)
-        self.robot.set_dofs_kv([self.env_cfg["kd"]] * self.num_actions, self.motor_dofs)
+        # self.robot.set_dofs_kp([self.env_cfg["kp"]] * self.num_actions, self.motor_dofs)
+        # self.robot.set_dofs_kv([self.env_cfg["kd"]] * self.num_actions, self.motor_dofs)
+        self.output_factor = 1
 
         # prepare reward functions and multiply reward scales by dt
         self.reward_functions, self.episode_sums = dict(), dict()
@@ -123,8 +124,9 @@ class Go2Env:
     def step(self, actions):
         self.actions = torch.clip(actions, -self.env_cfg["clip_actions"], self.env_cfg["clip_actions"])
         exec_actions = self.last_actions if self.simulate_action_latency else self.actions
-        target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
-        self.robot.control_dofs_position(target_dof_pos, self.motor_dofs)
+        # target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
+        # self.robot.control_dofs_position(target_dof_pos, self.motor_dofs)
+        self.robot.control_dofs_force(exec_actions * self.output_factor, self.motor_dofs)
         if random.random() < 0.001:
             random_pos = self.robot.get_pos()[...]
             random_pos[:, 2] += gs_rand_float(*self.env_cfg["random_move_z"], (len(random_pos),), self.device)
@@ -296,13 +298,14 @@ class Go2Env:
 
     def randomize_pd_gains(self):
         # pd gains of the joint control
-        num_dofs = self.robot.n_dofs
-        kp_min, kp_max = 5.0, 40.0
-        kv_min, kv_max = 0.2, 1.5
-        kp = torch.rand(num_dofs, device=self.device) * (kp_max - kp_min) + kp_min
-        kv = torch.rand(num_dofs, device=self.device) * (kv_max - kv_min) + kv_min
-        self.robot.set_dofs_kp(kp)
-        self.robot.set_dofs_kv(kv)
+        # num_dofs = self.robot.n_dofs
+        # kp_min, kp_max = 5.0, 40.0
+        # kv_min, kv_max = 0.2, 1.5
+        # kp = torch.rand(num_dofs, device=self.device) * (kp_max - kp_min) + kp_min
+        # kv = torch.rand(num_dofs, device=self.device) * (kv_max - kv_min) + kv_min
+        # self.robot.set_dofs_kp(kp)
+        # self.robot.set_dofs_kv(kv)
+        self.output_factor = random.random() * 3 + 0.1
 
     def randomize_armature(self):
         # joint's rotor inertia

@@ -219,7 +219,7 @@ public:
                 action[i] = last_action[i];
             }
 
-            target_dof_pos = action * action_scale + default_dof_pos;
+            target_dof_pos = action; //* action_scale + default_dof_pos;
         }
         catch (const c10::Error& e) {
             std::cerr << "Inference error: " << e.what() << std::endl;
@@ -284,10 +284,11 @@ public:
         // set target outputs
         for(int i=0; i<num_actions; ++i) {
             auto joint = ioBody->joint(motor_dof_names[i]);
-            double q = joint->q();
-            double dq = joint->dq();
+            // double q = joint->q();
+            // double dq = joint->dq();
             // double u = P_gain * (target_dof_pos[i] - q) + D_gain * (target_dof_vel[i] - dq);
-            double u = P_gain * (target_dof_pos[i] - q) + D_gain * (- dq);
+            // double u = P_gain * (target_dof_pos[i] - q) + D_gain * (- dq);
+            double u = target_dof_pos[i];
             joint->u() = u;
         }
 
