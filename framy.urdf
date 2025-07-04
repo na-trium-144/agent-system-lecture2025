@@ -242,6 +242,22 @@
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
     </collision>
   </link>
+  <link name="leg0_link_4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="0" iyy="0" izz="0" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+  </link>
   <joint name="leg0_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg0_link_1"/>
@@ -258,6 +274,11 @@
     <parent link="leg0_link_2"/>
     <child link="leg0_link_3"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+  </joint>
+  <joint name="leg0_joint_4" type="fixed">
+    <parent link="leg0_link_2"/>
+    <child link="leg0_link_4"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
   <link name="leg1_link_1">
     <inertial>
@@ -319,6 +340,22 @@
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
     </collision>
   </link>
+  <link name="leg1_link_4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="0" iyy="0" izz="0" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+  </link>
   <joint name="leg1_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg1_link_1"/>
@@ -335,6 +372,11 @@
     <parent link="leg1_link_2"/>
     <child link="leg1_link_3"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+  </joint>
+  <joint name="leg1_joint_4" type="fixed">
+    <parent link="leg1_link_2"/>
+    <child link="leg1_link_4"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
   <link name="leg2_link_1">
     <inertial>
@@ -396,6 +438,22 @@
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
     </collision>
   </link>
+  <link name="leg2_link_4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="0" iyy="0" izz="0" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+  </link>
   <joint name="leg2_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg2_link_1"/>
@@ -412,6 +470,11 @@
     <parent link="leg2_link_2"/>
     <child link="leg2_link_3"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+  </joint>
+  <joint name="leg2_joint_4" type="fixed">
+    <parent link="leg2_link_2"/>
+    <child link="leg2_link_4"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
   <link name="leg3_link_1">
     <inertial>
@@ -473,6 +536,22 @@
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
     </collision>
   </link>
+  <link name="leg3_link_4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="0" iyy="0" izz="0" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+  </link>
   <joint name="leg3_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg3_link_1"/>
@@ -489,5 +568,10 @@
     <parent link="leg3_link_2"/>
     <child link="leg3_link_3"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+  </joint>
+  <joint name="leg3_joint_4" type="fixed">
+    <parent link="leg3_link_2"/>
+    <child link="leg3_link_4"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 </robot>

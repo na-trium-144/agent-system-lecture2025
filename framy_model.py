@@ -320,6 +320,22 @@ for i, p in enumerate(leg_positions):
             ),
             name=f"leg{i}_link_3",
         ),
+        E.link(
+            E.inertial(
+                E.origin(xyz=f"0 0 0", rpy="0 0 0"),
+                E.mass(value="0.001"),
+                E.inertia(ixx="0", iyy="0", izz="0", ixy="0", ixz="0", iyz="0"),
+            ),
+            E.visual(
+                E.geometry(E.cylinder(radius="0.025", length="0.05")),
+                E.origin(xyz=f"0 0 0", rpy=f"{math.pi/2} 0 0"),
+                E.material(
+                    E.color(rgba=color + " 1"),
+                    name="a",
+                ),
+            ),
+            name=f"leg{i}_link_4",
+        ),
         E.joint(
             E.parent(link=f"base_link"),
             E.child(link=f"leg{i}_link_1"),
@@ -341,6 +357,13 @@ for i, p in enumerate(leg_positions):
             E.child(link=f"leg{i}_link_3"),
             E.origin(xyz=f"0 0 {-leg_size_2}", rpy="0 0 0"),
             name=f"leg{i}_joint_3",
+            type="fixed",
+        ),
+        E.joint(
+            E.parent(link=f"leg{i}_link_2"),
+            E.child(link=f"leg{i}_link_4"),
+            E.origin(xyz=f"0 0 0", rpy="0 0 0"),
+            name=f"leg{i}_joint_4",
             type="fixed",
         ),
     ]
