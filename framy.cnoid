@@ -20,6 +20,7 @@ items:
           name: "framy"
           plugin: Body
           class: BodyItem
+          is_selected: true
           is_checked: true
           data:
             file: "framy.urdf"
@@ -29,7 +30,7 @@ items:
               1, 0, 0,
               0, 1, 0,
               0, 0, 1 ]
-            jointDisplacements: [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+            jointDisplacements: [ -30, 60, -30, 60, -30, 60, -30, 60 ]
             initialRootPosition: [ 0, 0, 0.5 ]
             initialRootAttitude: [
               1, 0, 0,
@@ -59,7 +60,6 @@ items:
           name: "HVAC2023_athletics_field"
           plugin: Body
           class: BodyItem
-          is_selected: true
           is_checked: true
           data:
             file: "../choreonoid/ext/vnoid/model/field2023/field2023_athletics.body"
@@ -169,7 +169,7 @@ views:
         -
           camera: [ System, Perspective ]
           isCurrent: true
-          eye: [ 17.8448, 16.9481, 11.9118 ]
+          eye: [ 1.48296, 4.25496, 2.03645 ]
           direction: [ -0.393689, -0.780533, -0.485568 ]
           up: [ -0.218672, -0.433542, 0.874199 ]
         -
@@ -275,8 +275,8 @@ toolbars:
     lazyCollisionDetectionMode: true
 Body:
   "BodySelectionManager":
-    current_body_item: 4
-    current_link: "Base"
+    current_body_item: 2
+    current_link: "base_link"
   "KinematicFaultChecker":
     checkJointPositions: true
     angleMargin: 0
@@ -310,17 +310,17 @@ viewAreas:
     contents:
       type: splitter
       orientation: horizontal
-      sizes: [ 1163, 369 ]
+      sizes: [ 1455, 461 ]
       children:
         -
           type: splitter
           orientation: horizontal
-          sizes: [ 301, 858 ]
+          sizes: [ 377, 1074 ]
           children:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 416, 416 ]
+              sizes: [ 450, 450 ]
               children:
                 -
                   type: pane
@@ -332,7 +332,7 @@ viewAreas:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 624, 208 ]
+              sizes: [ 675, 225 ]
               children:
                 -
                   type: pane
@@ -344,7 +344,7 @@ viewAreas:
         -
           type: splitter
           orientation: vertical
-          sizes: [ 194, 638 ]
+          sizes: [ 210, 690 ]
           children:
             -
               type: pane
@@ -352,7 +352,7 @@ viewAreas:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 277, 357 ]
+              sizes: [ 300, 386 ]
               children:
                 -
                   type: pane

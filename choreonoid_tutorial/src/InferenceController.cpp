@@ -103,8 +103,8 @@ public:
         // P_gain = env_cfg->get("kp", 20);
         // D_gain = env_cfg->get("kd", 0.5);
         // でっちあげ
-        P_gain = 30;
-        D_gain = 1.2;
+        P_gain = 45;
+        D_gain = 5;
 
         resample_interval_steps = static_cast<int>(std::round(env_cfg->get("resampling_time_s", 4.0) / dt));
 
@@ -208,7 +208,7 @@ public:
 
     virtual bool control() override
     {
-        double target_x, target_y, threshold = 0.1;
+        double target_x, target_y, target_lin = 1, target_ang = 0.8, threshold = 0.1;
         switch(phase){
         case 0:
             target_x = 0;
@@ -221,12 +221,14 @@ public:
         case 2:
             target_x = 6.4;
             target_y = 0.97;
+            target_lin = 0.6;
             threshold = 0.01;
             break;
         case 3:
         default:
             target_x = 6.98;
             target_y = 0.97;
+            target_lin = 0.6;
             threshold = 0.01;
             break;
         }
@@ -239,14 +241,14 @@ public:
         double diff_y = target_y - actual_y;
         double target_yaw = std::atan2(diff_y, diff_x);
         // double target_lin = Vector3d{diff_x, diff_y, 0}.transpose() * actual_rot_vec;
-        double target_lin = std::sqrt(diff_x * diff_x + diff_y * diff_y);
+        double distance = std::sqrt(diff_x * diff_x + diff_y * diff_y);
         if(phase < 3 && std::abs(diff_x) < threshold && std::abs(diff_y) < threshold){
             phase++;
         }
-        command[2] = std::clamp(target_yaw - actual_yaw, ang_vel_range[0]*0.8, ang_vel_range[1]*0.8);
-        command[0] = std::clamp(target_lin / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*0.8, lin_vel_x_range[1]*0.8);
-        command[1] = std::clamp(0.0, lin_vel_y_range[0]*0.8, lin_vel_y_range[1]*0.8);
-        std::cout << "command velocity:" << command.transpose() << std::endl;
+        command[2] = std::clamp(8 * distance * (target_yaw - actual_yaw), ang_vel_range[0]*target_ang, ang_vel_range[1]*target_ang);
+        command[0] = std::clamp(1 / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*target_lin, lin_vel_x_range[1]*target_lin);
+        command[1] = std::clamp(0.0, lin_vel_y_range[0]*target_lin, lin_vel_y_range[1]*target_lin);
+        std::cout << "phase: " << phase << ", command velocity:" << command.transpose() << std::endl;
         // MessageView::instance()->putln(oss.str());
 
         // get current states

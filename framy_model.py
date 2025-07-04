@@ -6,10 +6,10 @@ E = lxml.builder.ElementMaker()
 color = "0.8 0.8 0.8"
 alpha = " 0.7"
 leg_size_1 = 0.2
-leg_mass_1 = 0.1
+leg_mass_1 = 1.5
 leg_size_2 = 0.25
-leg_mass_2 = 0.1
-leg_mass_3 = 0.03
+leg_mass_2 = 2
+leg_mass_3 = 0.5
 leg_positions = [
     "0.1 0.08",
     "0.1 -0.08",
