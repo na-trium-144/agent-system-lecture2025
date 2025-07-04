@@ -2,7 +2,7 @@
 
 ```sh
 source ~/genesis_ws/genesis_env/bin/activate
-python ./hoge_model.py
+python ./framy_model.py
 ```
 
 ```sh
@@ -29,5 +29,5 @@ catkin build
 
 ```sh
 source ~/ros/agent_system_ws/devel/setup.bash
-TARGET_PATH=`pwd`/logs/go2-walking/test LANG=C.utf-8 LC_ALL=C.utf-8 choreonoid ./hoge.cnoid
+TARGET_PATH=`pwd`/logs/go2-walking/test LANG=C.utf-8 LC_ALL=C.utf-8 choreonoid ./framy.cnoid
 ```

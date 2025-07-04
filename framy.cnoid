@@ -17,12 +17,12 @@ items:
       children:
         -
           id: 2
-          name: "hoge"
+          name: "framy"
           plugin: Body
           class: BodyItem
           is_checked: true
           data:
-            file: "hoge.urdf"
+            file: "framy.urdf"
             format: URDF
             rootPosition: [ 0, 0, 0.5 ]
             rootAttitude: [
@@ -121,7 +121,7 @@ items:
               plugin: Body
               class: WorldLogFileItem
               data:
-                file: "logs/choreonoid/hoge_worldlog.log"
+                file: "logs/choreonoid/framy_worldlog.log"
                 format: CNOID-WORLD-LOG
                 timeStampSuffix: true
                 recordingFrameRate: 15

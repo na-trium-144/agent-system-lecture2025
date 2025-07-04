@@ -3,20 +3,24 @@ import math
 
 E = lxml.builder.ElementMaker()
 
-color="0.8 0.7 0.5"
+color = "0.8 0.8 0.8"
+alpha = " 0.7"
 leg_size_1 = 0.2
 leg_mass_1 = 1
-leg_size_2 = 0.2
-leg_mass_2 = 1
+leg_size_2 = 0.25
+leg_mass_2 = 2
 leg_positions = [
-    "0.15 0.1",
-    "0.15 -0.1",
-    "-0.2 0.1",
-    "-0.2 -0.1",
+    "0.1 0.08",
+    "0.1 -0.08",
+    "-0.15 0.08",
+    "-0.15 -0.08",
 ]
 base_mass = 20 - (leg_mass_1 + leg_mass_2) * len(leg_positions)
-base_x = 0.5
-base_y = 0.4
+assert (
+    base_mass > leg_mass_1 and base_mass > leg_mass_2
+), f"base_mass ({base_mass}) shoule be larger than leg_mass"
+base_x = 0.4
+base_y = 0.3
 base_z = 0.2
 
 base_link = E.link(
@@ -33,11 +37,9 @@ base_link = E.link(
         ),
     ),
     E.visual(
-        E.geometry(
-            E.box(size=f"{base_x} {base_y} {base_z}")
-        ),
+        E.geometry(E.box(size=f"{base_x} {base_y} {base_z}")),
         E.material(
-            E.color(rgba=color + " 0.5"),
+            E.color(rgba=color + alpha),
             name="a",
         ),
     ),
@@ -46,56 +48,122 @@ base_link = E.link(
 head_elements = [
     E.link(
         E.visual(
-            E.geometry(
-                E.box(size="0.1 0.1 0.1")
-            ),
+            E.geometry(E.box(size="0.2 0.2 0.2")),
             E.material(
-                E.color(rgba=color + " 0.5"),
+                E.color(rgba=color + alpha),
                 name="a",
             ),
-            E.origin(xyz="0 0 0.05", rpy="0 0 0"),
-        ),
-        name="neck_link",
-    ),
-    E.joint(
-        E.parent(link=f"base_link"),
-        E.child(link=f"neck_link"),
-        E.origin(xyz="0.2 0 0.1", rpy="0 0 0"),
-        name="neck",
-        type="fixed",
-    ),
-    E.link(
-        E.visual(
-            E.geometry(
-                E.box(size="0.2 0.25 0.15")
-            ),
-            E.material(
-                E.color(rgba=color + " 0.5"),
-                name="a",
-            ),
-            E.origin(xyz="0 0 0.075", rpy="0 0 0"),
+            E.origin(xyz="0 0 0.1", rpy="0 0 0"),
         ),
         name="head_link",
     ),
     E.joint(
-        E.parent(link=f"neck_link"),
+        E.parent(link=f"base_link"),
         E.child(link=f"head_link"),
-        E.origin(xyz="0 0 0.1", rpy="0 0 0"),
+        E.origin(xyz=f"{base_x / 2 + 0.1 - 0.05} 0 {base_z / 2 - 0.05}", rpy="0 0 0"),
         name="head",
+        type="fixed",
+    ),
+    E.link(
+        E.visual(
+            E.geometry(E.box(size="0.1 0.1 0.05")),
+            E.material(
+                E.color(rgba=color + alpha),
+                name="a",
+            ),
+            E.origin(xyz="0.05 0 0.025", rpy="0 0 0"),
+        ),
+        name="nose_link",
+    ),
+    E.joint(
+        E.parent(link=f"head_link"),
+        E.child(link=f"nose_link"),
+        E.origin(xyz=f"{0.1 - 0.03} 0 0", rpy="0 0 0"),
+        name="nose",
+        type="fixed",
+    ),
+    E.link(
+        E.visual(
+            E.geometry(E.box(size="0.05 0.1 0.02")),
+            E.material(
+                E.color(rgba="0 0 0 0.5"),
+                name="a",
+            ),
+            E.origin(xyz="-0.025 0 -0.01", rpy="0 0 0"),
+        ),
+        name="nose_tip_link",
+    ),
+    E.joint(
+        E.parent(link=f"nose_link"),
+        E.child(link=f"nose_tip_link"),
+        E.origin(xyz=f"0.1 0 0.05", rpy="0 0 0"),
+        name="nose_tip",
+        type="fixed",
+    ),
+    E.link(
+        E.visual(
+            E.geometry(E.box(size="0.05 0.1 0.1")),
+            E.material(
+                E.color(rgba=color + alpha),
+                name="a",
+            ),
+            E.origin(xyz="0 0.05 0.05", rpy="0 0 0"),
+        ),
+        name="ear_left_link",
+    ),
+    E.joint(
+        E.parent(link=f"head_link"),
+        E.child(link=f"ear_left_link"),
+        E.origin(xyz=f"-0.02 {0.2 / 2 - 0.05} {0.2 - 0.05}", rpy="0 0 0"),
+        name="ear_left",
+        type="fixed",
+    ),
+    E.link(
+        E.visual(
+            E.geometry(E.box(size="0.05 0.1 0.1")),
+            E.material(
+                E.color(rgba=color + alpha),
+                name="a",
+            ),
+            E.origin(xyz="0 -0.05 0.05", rpy="0 0 0"),
+        ),
+        name="ear_right_link",
+    ),
+    E.joint(
+        E.parent(link=f"head_link"),
+        E.child(link=f"ear_right_link"),
+        E.origin(xyz=f"-0.02 {-0.2 / 2 + 0.05} {0.2 - 0.05}", rpy="0 0 0"),
+        name="ear_right",
+        type="fixed",
+    ),
+    E.link(
+        E.visual(
+            E.geometry(E.box(size="0.1 0.1 0.05")),
+            E.material(
+                E.color(rgba=color + alpha),
+                name="a",
+            ),
+            E.origin(xyz="-0.05 0 0", rpy="0 0 0"),
+        ),
+        name="tail_link",
+    ),
+    E.joint(
+        E.parent(link=f"base_link"),
+        E.child(link=f"tail_link"),
+        E.origin(xyz=f"{-base_x / 2 + 0.05} 0 {base_z / 2}", rpy="0 0 0"),
+        name="tail",
         type="fixed",
     ),
 ]
 
 eyes_length = 0.02
-eyes_radius = 0.03
-eyes_distance = 0.16
+eyes_radius = 0.02
+eyes_distance = 0.1
 
 head_elements += [
     E.link(
         E.visual(
-            E.geometry(
-                E.cylinder(length=str(eyes_length), radius=str(eyes_radius))
-            ),
+            E.geometry(E.cylinder(length=str(eyes_length), radius=str(eyes_radius))),
             E.material(
                 E.color(rgba="0 0 0 0.5"),
                 name="a",
@@ -107,15 +175,13 @@ head_elements += [
     E.joint(
         E.parent(link=f"head_link"),
         E.child(link=f"eye_left_link"),
-        E.origin(xyz=f"0.1 {-eyes_distance/2} 0.075", rpy=f"0 {math.pi / 2} 0"),
+        E.origin(xyz=f"0.1 {-eyes_distance/2} 0.1", rpy=f"0 {math.pi / 2} 0"),
         name="eye_left",
         type="fixed",
     ),
     E.link(
         E.visual(
-            E.geometry(
-                E.cylinder(length=str(eyes_length), radius=str(eyes_radius))
-            ),
+            E.geometry(E.cylinder(length=str(eyes_length), radius=str(eyes_radius))),
             E.material(
                 E.color(rgba="0 0 0 0.5"),
                 name="a",
@@ -127,7 +193,7 @@ head_elements += [
     E.joint(
         E.parent(link=f"head_link"),
         E.child(link=f"eye_right_link"),
-        E.origin(xyz=f"0.1 {eyes_distance/2} 0.075", rpy=f"0 {math.pi / 2} 0"),
+        E.origin(xyz=f"0.1 {eyes_distance/2} 0.1", rpy=f"0 {math.pi / 2} 0"),
         name="eye_right",
         type="fixed",
     ),
@@ -150,9 +216,7 @@ for i, p in enumerate(leg_positions):
                 ),
             ),
             E.visual(
-                E.geometry(
-                    E.box(size=f"0.05 0.05 {leg_size_1}")
-                ),
+                E.geometry(E.box(size=f"0.05 0.05 {leg_size_1}")),
                 E.origin(xyz=f"0 0 {-leg_size_1/2}", rpy="0 0 0"),
                 E.material(
                     E.color(rgba=color + " 1"),
@@ -175,9 +239,7 @@ for i, p in enumerate(leg_positions):
                 ),
             ),
             E.visual(
-                E.geometry(
-                    E.box(size=f"0.05 0.05 {leg_size_2}")
-                ),
+                E.geometry(E.box(size=f"0.05 0.05 {leg_size_2}")),
                 E.origin(xyz=f"0 0 {-leg_size_2/2}", rpy="0 0 0"),
                 E.material(
                     E.color(rgba=color + " 1"),
@@ -185,9 +247,7 @@ for i, p in enumerate(leg_positions):
                 ),
             ),
             E.collision(
-                E.geometry(
-                    E.box(size=f"0.05 0.05 {leg_size_2}")
-                ),
+                E.geometry(E.box(size=f"0.05 0.05 {leg_size_2}")),
                 E.origin(xyz=f"0 0 {-leg_size_2/2}", rpy="0 0 0"),
             ),
             name=f"leg{i}_link_2",
@@ -214,8 +274,8 @@ urdf = E.robot(
     base_link,
     *head_elements,
     *leg_elements,
-    name="hoge",
+    name="framy",
 )
 
-with open("hoge.urdf", "wb") as f:
+with open("framy.urdf", "wb") as f:
     f.write(lxml.etree.tostring(urdf, pretty_print=True))

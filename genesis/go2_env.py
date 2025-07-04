@@ -59,7 +59,7 @@ class Go2Env:
         self.inv_base_init_quat = inv_quat(self.base_init_quat)
         self.robot = self.scene.add_entity(
             gs.morphs.URDF(
-                file=join(dirname(dirname(__file__)), "hoge.urdf"),
+                file=join(dirname(dirname(__file__)), "framy.urdf"),
                 pos=self.base_init_pos.cpu().numpy(),
                 quat=self.base_init_quat.cpu().numpy(),
             ),
