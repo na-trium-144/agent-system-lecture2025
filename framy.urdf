@@ -2,8 +2,8 @@
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="8"/>
-      <inertia ixx="0.08666666666666667" iyy="0.13333333333333336" izz="0.16666666666666666" ixy="0" ixz="0" iyz="0"/>
+      <mass value="10.8"/>
+      <inertia ixx="0.117" iyy="0.18000000000000005" izz="0.225" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -161,8 +161,8 @@
   <link name="leg0_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -180,10 +180,32 @@
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
     </collision>
   </link>
+  <link name="leg0_link_3">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="0.00012500000000000003" iyy="0.00012500000000000003" izz="0.00012500000000000003" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+    </collision>
+  </link>
   <joint name="leg0_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg0_link_1"/>
-    <origin xyz="0.1 0.08 0" rpy="0 0 0"/>
+    <origin xyz="0.1 0.08 0.05" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg0_joint_2" type="continuous">
@@ -191,6 +213,11 @@
     <child link="leg0_link_2"/>
     <origin xyz="0 0 -0.2" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
+  </joint>
+  <joint name="leg0_joint_3" type="fixed">
+    <parent link="leg0_link_2"/>
+    <child link="leg0_link_3"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
   </joint>
   <link name="leg1_link_1">
     <inertial>
@@ -211,8 +238,8 @@
   <link name="leg1_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -230,10 +257,32 @@
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
     </collision>
   </link>
+  <link name="leg1_link_3">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="0.00012500000000000003" iyy="0.00012500000000000003" izz="0.00012500000000000003" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+    </collision>
+  </link>
   <joint name="leg1_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg1_link_1"/>
-    <origin xyz="0.1 -0.08 0" rpy="0 0 0"/>
+    <origin xyz="0.1 -0.08 0.05" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg1_joint_2" type="continuous">
@@ -241,6 +290,11 @@
     <child link="leg1_link_2"/>
     <origin xyz="0 0 -0.2" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
+  </joint>
+  <joint name="leg1_joint_3" type="fixed">
+    <parent link="leg1_link_2"/>
+    <child link="leg1_link_3"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
   </joint>
   <link name="leg2_link_1">
     <inertial>
@@ -261,8 +315,8 @@
   <link name="leg2_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -280,10 +334,32 @@
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
     </collision>
   </link>
+  <link name="leg2_link_3">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="0.00012500000000000003" iyy="0.00012500000000000003" izz="0.00012500000000000003" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+    </collision>
+  </link>
   <joint name="leg2_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg2_link_1"/>
-    <origin xyz="-0.15 0.08 0" rpy="0 0 0"/>
+    <origin xyz="-0.15 0.08 0.05" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg2_joint_2" type="continuous">
@@ -291,6 +367,11 @@
     <child link="leg2_link_2"/>
     <origin xyz="0 0 -0.2" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
+  </joint>
+  <joint name="leg2_joint_3" type="fixed">
+    <parent link="leg2_link_2"/>
+    <child link="leg2_link_3"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
   </joint>
   <link name="leg3_link_1">
     <inertial>
@@ -311,8 +392,8 @@
   <link name="leg3_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -330,10 +411,32 @@
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
     </collision>
   </link>
+  <link name="leg3_link_3">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="0.00012500000000000003" iyy="0.00012500000000000003" izz="0.00012500000000000003" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
+    </collision>
+  </link>
   <joint name="leg3_joint_1" type="continuous">
     <parent link="base_link"/>
     <child link="leg3_link_1"/>
-    <origin xyz="-0.15 -0.08 0" rpy="0 0 0"/>
+    <origin xyz="-0.15 -0.08 0.05" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="leg3_joint_2" type="continuous">
@@ -341,5 +444,10 @@
     <child link="leg3_link_2"/>
     <origin xyz="0 0 -0.2" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
+  </joint>
+  <joint name="leg3_joint_3" type="fixed">
+    <parent link="leg3_link_2"/>
+    <child link="leg3_link_3"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
   </joint>
 </robot>

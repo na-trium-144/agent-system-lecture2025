@@ -8,14 +8,15 @@ alpha = " 0.7"
 leg_size_1 = 0.2
 leg_mass_1 = 1
 leg_size_2 = 0.25
-leg_mass_2 = 2
+leg_mass_2 = 1
+leg_mass_3 = 0.3
 leg_positions = [
     "0.1 0.08",
     "0.1 -0.08",
     "-0.15 0.08",
     "-0.15 -0.08",
 ]
-base_mass = 20 - (leg_mass_1 + leg_mass_2) * len(leg_positions)
+base_mass = 20 - (leg_mass_1 + leg_mass_2 + leg_mass_3) * len(leg_positions)
 assert (
     base_mass > leg_mass_1 and base_mass > leg_mass_2
 ), f"base_mass ({base_mass}) shoule be larger than leg_mass"
@@ -252,10 +253,37 @@ for i, p in enumerate(leg_positions):
             ),
             name=f"leg{i}_link_2",
         ),
+        E.link(
+            E.inertial(
+                E.origin(xyz=f"0 0 0", rpy="0 0 0"),
+                E.mass(value=str(leg_mass_3)),
+                E.inertia(
+                    ixx=str(leg_mass_3 * (0.05**2 + 0.05**2) / 12),
+                    iyy=str(leg_mass_3 * (0.05**2 + 0.05**2) / 12),
+                    izz=str(leg_mass_3 * (0.05**2 + 0.05**2) / 12),
+                    ixy="0",
+                    ixz="0",
+                    iyz="0",
+                ),
+            ),
+            E.visual(
+                E.geometry(E.cylinder(radius="0.03", length="0.05")),
+                E.origin(xyz=f"0 0 0", rpy=f"{math.pi/2} 0 0"),
+                E.material(
+                    E.color(rgba=color + " 1"),
+                    name="a",
+                ),
+            ),
+            E.collision(
+                E.geometry(E.cylinder(radius="0.03", length="0.05")),
+                E.origin(xyz=f"0 0 0", rpy=f"{math.pi/2} 0 0"),
+            ),
+            name=f"leg{i}_link_3",
+        ),
         E.joint(
             E.parent(link=f"base_link"),
             E.child(link=f"leg{i}_link_1"),
-            E.origin(xyz=p + " 0", rpy="0 0 0"),
+            E.origin(xyz=p + " 0.05", rpy="0 0 0"),
             E.axis(xyz="0 1 0"),
             name=f"leg{i}_joint_1",
             type="continuous",
@@ -267,6 +295,13 @@ for i, p in enumerate(leg_positions):
             E.axis(xyz="0 1 0"),
             name=f"leg{i}_joint_2",
             type="continuous",
+        ),
+        E.joint(
+            E.parent(link=f"leg{i}_link_2"),
+            E.child(link=f"leg{i}_link_3"),
+            E.origin(xyz=f"0 0 {-leg_size_2}", rpy="0 0 0"),
+            name=f"leg{i}_joint_3",
+            type="fixed",
         ),
     ]
 
