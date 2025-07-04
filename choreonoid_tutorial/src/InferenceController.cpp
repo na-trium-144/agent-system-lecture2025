@@ -208,11 +208,7 @@ public:
 
     virtual bool control() override
     {
-        double actual_x = ioBody->rootLink()->translation()[0];
-        double actual_y = ioBody->rootLink()->translation()[1];
-        Vector3d actual_rot_vec = (ioBody->rootLink()->rotation() * Vector3d{1, 0, 0});
-        double actual_yaw = std::atan2(actual_rot_vec[1], actual_rot_vec[0]);
-        double target_x, target_y, threshold = 0.1, max_vel = 0.5;
+        double target_x, target_y, threshold = 0.1;
         switch(phase){
         case 0:
             target_x = 0;
@@ -226,27 +222,32 @@ public:
             target_x = 6.4;
             target_y = 0.97;
             threshold = 0.01;
-            max_vel = 0.2;
             break;
         case 3:
         default:
             target_x = 6.98;
             target_y = 0.97;
             threshold = 0.01;
-            max_vel = 0.2;
             break;
         }
+
+        double actual_x = ioBody->rootLink()->translation()[0];
+        double actual_y = ioBody->rootLink()->translation()[1];
+        Vector3d actual_rot_vec = (ioBody->rootLink()->rotation() * Vector3d{1, 0, 0});
+        double actual_yaw = std::atan2(actual_rot_vec[1], actual_rot_vec[0]);
         double diff_x = target_x - actual_x;
         double diff_y = target_y - actual_y;
-        double diff_yaw = std::atan2(diff_y, diff_x) - actual_yaw;
+        double target_yaw = std::atan2(diff_y, diff_x);
+        // double target_lin = Vector3d{diff_x, diff_y, 0}.transpose() * actual_rot_vec;
+        double target_lin = std::sqrt(diff_x * diff_x + diff_y * diff_y);
         if(phase < 3 && std::abs(diff_x) < threshold && std::abs(diff_y) < threshold){
             phase++;
         }
-        // command[0] = std::clamp(diff_x, lin_vel_x_range[0], lin_vel_x_range[1]);
-        command[0] = std::clamp(diff_x, -max_vel, max_vel);
-        command[1] = std::clamp(diff_y, -max_vel, max_vel);
-        command[2] = std::clamp(diff_yaw, ang_vel_range[0], ang_vel_range[1]);
+        command[0] = std::clamp(target_lin, lin_vel_x_range[0]*0.8, lin_vel_x_range[1]*0.8);
+        command[1] = std::clamp(0.0, lin_vel_y_range[0]*0.8, lin_vel_y_range[1]*0.8);
+        command[2] = std::clamp(target_yaw - actual_yaw, ang_vel_range[0]*0.8, ang_vel_range[1]*0.8);
         std::cout << "command velocity:" << command.transpose() << std::endl;
+        // MessageView::instance()->putln(oss.str());
 
         // get current states
         const auto rootLink = ioBody->rootLink();
