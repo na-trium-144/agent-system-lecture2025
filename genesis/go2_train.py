@@ -93,7 +93,7 @@ def get_cfgs():
         "base_init_pos": [0.0, 0.0, 0.42],
         "base_init_quat": [1.0, 0.0, 0.0, 0.0],
         "random_move_z": [0, 0.2],
-        "episode_length_s": 20.0,
+        "episode_length_s": 40.0,
         "resampling_time_s": 4.0,
         "action_scale": 0.25,
         "simulate_action_latency": True,

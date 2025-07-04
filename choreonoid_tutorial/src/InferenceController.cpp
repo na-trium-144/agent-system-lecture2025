@@ -14,6 +14,14 @@
 using namespace cnoid;
 namespace fs = std::filesystem;
 
+struct Checkpoint{
+    double x;
+    double y;
+    double lin;
+    double ang;
+    double threshold;
+};
+
 class InferenceController1 : public SimpleController
 {
     Body* ioBody;
@@ -45,6 +53,7 @@ class InferenceController1 : public SimpleController
 
     // Command resampling
     int phase = 0;
+    std::vector<Checkpoint> checkpoints;
     Vector3d command;
     Vector2d lin_vel_x_range;
     Vector2d lin_vel_y_range;
@@ -165,6 +174,19 @@ public:
         model.to(torch::kCPU);
         model.eval();
 
+        YAMLReader ck_reader;
+        auto ck_root = ck_reader.loadDocument(std::filesystem::path(__FILE__).parent_path().string() + "/checkpoints.yaml")->toMapping()->findListing("checkpoints");
+        checkpoints.clear();
+        for (int i = 0; i < ck_root->size(); i++){
+            Checkpoint ck_data;
+            ck_data.x = ck_root->at(i)->toMapping()->get("x", 0.0);
+            ck_data.y = ck_root->at(i)->toMapping()->get("y", 0.0);
+            ck_data.lin = ck_root->at(i)->toMapping()->get("lin", 1.0);
+            ck_data.ang = ck_root->at(i)->toMapping()->get("ang", 0.8);
+            ck_data.threshold = ck_root->at(i)->toMapping()->get("threshold", 0.1);
+            checkpoints.push_back(ck_data);
+        }
+
         return true;
     }
 
@@ -208,47 +230,34 @@ public:
 
     virtual bool control() override
     {
-        double target_x, target_y, target_lin = 1, target_ang = 0.8, threshold = 0.1;
-        switch(phase){
-        case 0:
-            target_x = 0;
-            target_y = 0.97;
-            break;
-        case 1:
-            target_x = 5.5;
-            target_y = 0.97;
-            break;
-        case 2:
-            target_x = 6.4;
-            target_y = 0.97;
-            target_lin = 0.6;
-            threshold = 0.01;
-            break;
-        case 3:
-        default:
-            target_x = 6.98;
-            target_y = 0.97;
-            target_lin = 0.6;
-            threshold = 0.01;
-            break;
-        }
-
+        auto ck = checkpoints.at(phase);
         double actual_x = ioBody->rootLink()->translation()[0];
         double actual_y = ioBody->rootLink()->translation()[1];
         Vector3d actual_rot_vec = (ioBody->rootLink()->rotation() * Vector3d{1, 0, 0});
         double actual_yaw = std::atan2(actual_rot_vec[1], actual_rot_vec[0]);
-        double diff_x = target_x - actual_x;
-        double diff_y = target_y - actual_y;
+        double diff_x = ck.x - actual_x;
+        double diff_y = ck.y - actual_y;
         double target_yaw = std::atan2(diff_y, diff_x);
-        // double target_lin = Vector3d{diff_x, diff_y, 0}.transpose() * actual_rot_vec;
-        double distance = std::sqrt(diff_x * diff_x + diff_y * diff_y);
-        if(phase < 3 && std::abs(diff_x) < threshold && std::abs(diff_y) < threshold){
-            phase++;
+        double diff_yaw = target_yaw - actual_yaw;
+        while(diff_yaw > M_PI){
+            diff_yaw -= 2 * M_PI;
         }
-        command[2] = std::clamp(8 * distance * (target_yaw - actual_yaw), ang_vel_range[0]*target_ang, ang_vel_range[1]*target_ang);
-        command[0] = std::clamp(1 / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*target_lin, lin_vel_x_range[1]*target_lin);
-        command[1] = std::clamp(0.0, lin_vel_y_range[0]*target_lin, lin_vel_y_range[1]*target_lin);
+        while(diff_yaw < -M_PI){
+            diff_yaw += 2 * M_PI;
+        }
+        // double target_lin = Vector3d{diff_x, diff_y, 0}.transpose() * actual_rot_vec;
+
+        if(phase < checkpoints.size() - 1 && (diff_x < -1 || std::abs(diff_x) < ck.threshold && std::abs(diff_y) < ck.threshold && std::abs(diff_yaw) >= M_PI / 2)){
+            phase++;
+            diff_yaw = 0;
+        }
+
+        double distance = std::sqrt(diff_x * diff_x + diff_y * diff_y);
+        command[2] = std::clamp(4 * distance * diff_yaw, ang_vel_range[0]*ck.ang, ang_vel_range[1]*ck.ang);
+        command[0] = std::clamp(1 / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*ck.lin, lin_vel_x_range[1]*ck.lin);
+        command[1] = std::clamp(0.0, lin_vel_y_range[0]*ck.lin, lin_vel_y_range[1]*ck.lin);
         std::cout << "phase: " << phase << ", command velocity:" << command.transpose() << std::endl;
+        // std::cout << ck.x << ", " << ck.y << ", " << ck.lin << ", " << ck.ang << ", " << ck.threshold << std::endl;
         // MessageView::instance()->putln(oss.str());
 
         // get current states

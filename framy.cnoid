@@ -25,17 +25,17 @@ items:
           data:
             file: "framy.urdf"
             format: URDF
-            rootPosition: [ 0, 0, 0.5 ]
+            rootPosition: [ 0, 0, 0.4 ]
             rootAttitude: [
-              1, 0, 0,
-              0, 1, 0,
-              0, 0, 1 ]
+              1, 7.34788079e-16, -7.34788079e-16,
+              -7.34788079e-16, 1, 7.34788079e-16,
+              7.34788079e-16, -7.34788079e-16, 1 ]
             jointDisplacements: [ -30, 60, -30, 60, -30, 60, -30, 60 ]
-            initialRootPosition: [ 0, 0, 0.5 ]
+            initialRootPosition: [ 0, 0, 0.4 ]
             initialRootAttitude: [
-              1, 0, 0,
-              0, 1, 0,
-              0, 0, 1 ]
+              1, 7.34788079e-16, -7.34788079e-16,
+              -7.34788079e-16, 1, 7.34788079e-16,
+              7.34788079e-16, -7.34788079e-16, 1 ]
             fix_root: false
             collisionDetection: true
             selfCollisionDetection: false
@@ -56,7 +56,7 @@ items:
                 reloading: false
                 export_symbols: false
         -
-          id: 4
+          id: 5
           name: "HVAC2023_athletics_field"
           plugin: Body
           class: BodyItem
@@ -69,7 +69,7 @@ items:
               1, 0, 0,
               0, 1, 0,
               0, 0, 1 ]
-            jointDisplacements: [ 2.33642e-14, 0, 4.8409e-15, 0, -2.75416e-14 ]
+            jointDisplacements: [ 7.55402e-15, 0, 1.03047e-14, 0, -5.33555e-15 ]
             initialJointDisplacements: [ 0, 0, 0, 0, 0 ]
             initialRootPosition: [ 0, 0, 0 ]
             initialRootAttitude: [
@@ -83,10 +83,11 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 5
+          id: 7
           name: "AISTSimulator"
           plugin: Body
           class: AISTSimulatorItem
+          is_selected: true
           data:
             time_step: 0.001
             realtime_sync_mode: compensatory
@@ -100,6 +101,7 @@ items:
             record_collision_data: false
             controller_options: ""
             block_scene_view_edit_mode: false
+            time_sync_items: [ 4, 6 ]
             dynamicsMode: "Forward dynamics"
             integrationMode: semi-implicit_euler
             gravity: [ 0, 0, -9.80665 ]
@@ -116,7 +118,7 @@ items:
             oldAccelSensorMode: false
           children:
             -
-              id: 6
+              id: 8
               name: "WorldLogFile"
               plugin: Body
               class: WorldLogFileItem
@@ -137,7 +139,7 @@ views:
     class: ItemTreeView
     mounted: true
     state:
-      expanded: [ 1, 2, 3, 4, 5 ]
+      expanded: [ 1, 2, 3, 5, 7 ]
   -
     id: 2
     plugin: Base
@@ -169,7 +171,7 @@ views:
         -
           camera: [ System, Perspective ]
           isCurrent: true
-          eye: [ 1.48296, 4.25496, 2.03645 ]
+          eye: [ 4.40057, 5.70843, 2.62612 ]
           direction: [ -0.393689, -0.780533, -0.485568 ]
           up: [ -0.218672, -0.433542, 0.874199 ]
         -
@@ -252,7 +254,7 @@ views:
     mounted: true
 toolbars:
   "TimeBar":
-    current_time: 11.376
+    current_time: 2.06
     min_time: 0
     max_time: 30
     frame_rate: 1000
@@ -294,7 +296,7 @@ Body:
         show_cm_projection: false
         show_zmp: false
       -
-        body_item: 4
+        body_item: 5
         show_cm: false
         show_cm_projection: false
         show_zmp: false
