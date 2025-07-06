@@ -59,12 +59,12 @@ def get_train_cfg(exp_name, max_iterations):
     return train_cfg_dict
 
 
-def get_cfgs():
+def get_cfgs(exp_name: str):
     default_joint_angles = {}
     dof_names = []
     for i in range(4):
-        default_joint_angles[f"leg{i}_joint_1"] = 0  # -math.pi / 6
-        default_joint_angles[f"leg{i}_joint_2"] = 0  # math.pi / 3
+        default_joint_angles[f"leg{i}_joint_1"] = -math.pi / 6
+        default_joint_angles[f"leg{i}_joint_2"] = math.pi / 3
         dof_names += [f"leg{i}_joint_1", f"leg{i}_joint_2"]
     default_joint_angles[f"longleg_joint_0"] = math.pi / 2
     dof_names += [f"longleg_joint_0"]
@@ -76,6 +76,8 @@ def get_cfgs():
         # joint/link names
         "default_joint_angles": default_joint_angles,
         "dof_names": dof_names,
+
+        "jump": exp_name == "jump",
         # PD
         "kp": 20.0,
         "kd": 0.5,
@@ -85,7 +87,7 @@ def get_cfgs():
         # base pose
         "base_init_pos": [0.0, 0.0, 0.45],
         "base_init_quat": [1.0, 0.0, 0.0, 0.0],
-        "random_move_z": [0, 0.3],
+        "random_move_z": [0, 0.3] if exp_name != "jump" else None,
         "episode_length_s": 40.0,
         "resampling_time_s": 4.0,
         "action_scale": 0.25,
@@ -102,19 +104,37 @@ def get_cfgs():
             "dof_force": 0.1,
         },
     }
-    reward_cfg = {
-        "tracking_sigma": 0.25,
-        "base_height_target": 0.3,
-        "feet_height_target": 0.075,
-        "reward_scales": {
-            "tracking_lin_vel": 1.0,
-            "tracking_ang_vel": 3.0,
-            # "lin_vel_z": -1.0,
-            "base_height": -100.0,
-            # "action_rate": -0.005,
-            "similar_to_default": -0.5,
-        },
-    }
+    if exp_name == "jump":
+        reward_cfg = {
+            "tracking_sigma": 0.1,
+            "base_height_target": 0.3,
+            "feet_height_target": 0.075,
+            "reward_scales": {
+                # "tracking_lin_vel": 1.0,
+                # "tracking_ang_vel": 3.0,
+                "tracking_jump_vel": 10.0,
+                "tracking_jump_traj": 10.0,
+                # "lin_vel_z": -1.0,
+                # "base_height": -100.0,
+                "action_rate": -0.002,
+                "similar_to_default": -0.1,
+            },
+        }
+    else:
+        reward_cfg = {
+            "tracking_sigma": 0.25,
+            "base_height_target": 0.3,
+            "feet_height_target": 0.075,
+            "reward_scales": {
+                "tracking_lin_vel": 1.0,
+                "tracking_ang_vel": 3.0,
+                "lin_vel_z": -1.0,
+                "base_height": -50.0,
+                "action_rate": -0.002,
+                "similar_to_default": -0.05,
+                "similar_to_default_long": -1.0,
+            },
+        }
     command_cfg = {
         "num_commands": 3,
         "lin_vel_x_range": [0, 2],
@@ -138,7 +158,7 @@ def main():
     gs.init(logging_level="warning")
 
     log_dir = f"{args.log_dir}/{args.exp_name}/{args.param_name}"
-    env_cfg, obs_cfg, reward_cfg, command_cfg = get_cfgs()
+    env_cfg, obs_cfg, reward_cfg, command_cfg = get_cfgs(args.exp_name)
     train_cfg = get_train_cfg(args.exp_name, args.max_iterations)
 
     env_cfg["substeps"] = args.substeps

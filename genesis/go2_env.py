@@ -65,6 +65,14 @@ class Go2Env:
             ),
         )
 
+        if self.env_cfg["jump"]:
+            self.wall = self.scene.add_entity(gs.morphs.Box(
+                pos=(2.3 + 1, 0, 1.5 - 1),
+                size=(2, 2, 2),
+                # fixed=True,
+            ))
+            self.box_pos = torch.tensor([[2.1 + random.random() * 0.4 + 1, 0, 1.3 + random.random() * 0.4 - 1]], device=self.device)
+
         # build
         self.scene.build(n_envs=num_envs)
 
@@ -127,11 +135,19 @@ class Go2Env:
         # target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
         # self.robot.control_dofs_position(target_dof_pos, self.motor_dofs)
         self.robot.control_dofs_force(exec_actions * self.output_factor, self.motor_dofs)
-        if random.random() < 0.001:
+        if random.random() < 0.001 and self.env_cfg["random_move_z"]:
             random_pos = self.robot.get_pos()[...]
             random_pos[:, 2] += gs_rand_float(*self.env_cfg["random_move_z"], (len(random_pos),), self.device)
             self.robot.set_pos(random_pos, zero_velocity=False)
+        if self.env_cfg["jump"]:
+            self.wall.set_pos(self.box_pos.repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
+            self.wall.set_quat(torch.tensor([1, 0, 0, 0], device=self.device).repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
+
         self.scene.step()
+
+        if self.env_cfg["jump"]:
+            self.wall.set_pos(self.box_pos.repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
+            self.wall.set_quat(torch.tensor([1, 0, 0, 0], device=self.device).repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
 
         # update buffers
         self.episode_length_buf += 1
@@ -222,6 +238,9 @@ class Go2Env:
         self.base_ang_vel[envs_idx] = 0
         self.robot.zero_all_dofs_velocity(envs_idx)
 
+        if self.env_cfg["jump"]:
+            self.box_pos = torch.tensor([[2.1 + random.random() * 0.4 + 1, 0, 1.3 + random.random() * 0.4 - 1]], device=self.device)
+
         # reset buffers
         self.last_actions[envs_idx] = 0.0
         self.last_dof_vel[envs_idx] = 0.0
@@ -259,6 +278,17 @@ class Go2Env:
         ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2])
         return torch.exp(-ang_vel_error / self.reward_cfg["tracking_sigma"])
 
+    def _reward_tracking_jump_vel(self):
+        lin_vel_error = torch.square(0.3 - torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))
+        return torch.exp(-lin_vel_error / self.reward_cfg["tracking_sigma"])
+
+    def _reward_tracking_jump_traj(self):
+        wall_origin = self.wall.get_pos().detach()
+        wall_origin[:, 0] -= 1
+        wall_origin[:, 2] -= 1
+        radius_error = torch.square(2.0 - torch.sqrt(torch.sum(torch.square(self.base_pos[:, :] - wall_origin), dim=1)))
+        return torch.exp(-radius_error / 0.2)
+
     def _reward_lin_vel_z(self):
         # Penalize z axis base linear velocity
         return torch.square(self.base_lin_vel[:, 2])
@@ -269,7 +299,11 @@ class Go2Env:
 
     def _reward_similar_to_default(self):
         # Penalize joint poses far away from default pose
-        return torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1)
+        return torch.sum(torch.abs(self.dof_pos[:, :8] - self.default_dof_pos[:8]), dim=1)
+
+    def _reward_similar_to_default_long(self):
+        # Penalize joint poses far away from default pose
+        return torch.sum(torch.abs(self.dof_pos[:, 8:] - self.default_dof_pos[8:]), dim=1)
 
     def _reward_base_height(self):
         # Penalize base height lower than target
