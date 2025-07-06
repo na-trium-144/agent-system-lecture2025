@@ -1,5 +1,7 @@
 # lecture2025
 
+13.84, -1.05, 0.4 -> 16.1, -1.05, 1.98
+
 ```sh
 source ~/genesis_ws/genesis_env/bin/activate
 python ./framy_model.py

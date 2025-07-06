@@ -6,20 +6,20 @@ E = lxml.builder.ElementMaker()
 color = "0.8 0.8 0.8"
 alpha = " 0.7"
 leg_size_1 = 0.2
-leg_mass_1 = 1.5
 leg_size_2 = 0.25
-leg_mass_2 = 2
-leg_mass_3 = 0.5
+leg_mass_1 = 0.5
+leg_mass_2 = 1
+leg_mass_3 = 0.1
+longleg_size = 0.25
+longleg_mass = 0.5
+longleg_num = 12
 leg_positions = [
     "0.1 0.08",
     "0.1 -0.08",
     "-0.15 0.08",
     "-0.15 -0.08",
 ]
-base_mass = 20 - (leg_mass_1 + leg_mass_2 + leg_mass_3) * len(leg_positions)
-assert (
-    base_mass > leg_mass_1 and base_mass > leg_mass_2
-), f"base_mass ({base_mass}) shoule be larger than leg_mass"
+base_mass = max(1, 20 - (leg_mass_1 + leg_mass_2 + leg_mass_3) * len(leg_positions) - longleg_mass * longleg_num)
 base_x = 0.4
 base_y = 0.3
 base_z = 0.2
@@ -368,10 +368,51 @@ for i, p in enumerate(leg_positions):
         ),
     ]
 
+longleg_elements = []
+for i in range(longleg_num):
+    leg_elements += [
+        E.link(
+            E.inertial(
+                E.origin(xyz=f"0 0 {-longleg_size/2}", rpy="0 0 0"),
+                E.mass(value=str(longleg_mass)),
+                E.inertia(
+                    ixx=str(longleg_mass * (0.05**2 + longleg_size**2) / 12),
+                    iyy=str(longleg_mass * (0.05**2 + longleg_size**2) / 12),
+                    izz=str(longleg_mass * (0.05**2 + 0.05**2) / 12),
+                    ixy="0",
+                    ixz="0",
+                    iyz="0",
+                ),
+            ),
+            E.visual(
+                E.geometry(E.box(size=f"0.05 0.05 {longleg_size}")),
+                E.origin(xyz=f"0 0 {-longleg_size/2}", rpy="0 0 0"),
+                E.material(
+                    E.color(rgba=color + " 1"),
+                    name="a",
+                ),
+            ),
+            E.collision(
+                E.geometry(E.box(size=f"0.05 0.05 {longleg_size}")),
+                E.origin(xyz=f"0 0 {-longleg_size/2}", rpy="0 0 0"),
+            ) if i == longleg_num - 1 else "",
+            name=f"longleg_link_{i}",
+        ),
+        E.joint(
+            E.parent(link=f"base_link" if i == 0 else f"longleg_link_{i-1}"),
+            E.child(link=f"longleg_link_{i}"),
+            E.origin(xyz=f"{longleg_size/2} 0 0" if i == 0 else f"0 0 {-longleg_size}", rpy="0 0 0"),
+            E.axis(xyz="0 1 0"),
+            name=f"longleg_joint_{i}",
+            type="continuous",
+        ),
+    ]
+
 urdf = E.robot(
     base_link,
     *head_elements,
     *leg_elements,
+    *longleg_elements,
     name="framy",
 )
 

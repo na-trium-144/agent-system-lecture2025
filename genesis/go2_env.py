@@ -305,7 +305,7 @@ class Go2Env:
         # kv = torch.rand(num_dofs, device=self.device) * (kv_max - kv_min) + kv_min
         # self.robot.set_dofs_kp(kp)
         # self.robot.set_dofs_kv(kv)
-        self.output_factor = random.random() * 3 + 0.1
+        self.output_factor = math.exp(random.random() * 5 - 3)
 
     def randomize_armature(self):
         # joint's rotor inertia

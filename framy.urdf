@@ -2,8 +2,8 @@
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="4.0"/>
-      <inertia ixx="0.043333333333333335" iyy="0.06666666666666668" izz="0.08333333333333333" ixy="0" ixz="0" iyz="0"/>
+      <mass value="7.6"/>
+      <inertia ixx="0.08233333333333333" iyy="0.12666666666666668" izz="0.15833333333333333" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -185,8 +185,8 @@
   <link name="leg0_link_1">
     <inertial>
       <origin xyz="0 0 -0.1" rpy="0 0 0"/>
-      <mass value="1.5"/>
-      <inertia ixx="0.005312500000000001" iyy="0.005312500000000001" izz="0.0006250000000000001" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0017708333333333337" iyy="0.0017708333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -201,8 +201,8 @@
   <link name="leg0_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -223,8 +223,8 @@
   <link name="leg0_link_3">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.5"/>
-      <inertia ixx="0.00020833333333333337" iyy="0.00020833333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.1"/>
+      <inertia ixx="4.166666666666668e-05" iyy="4.166666666666668e-05" izz="4.166666666666668e-05" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -283,8 +283,8 @@
   <link name="leg1_link_1">
     <inertial>
       <origin xyz="0 0 -0.1" rpy="0 0 0"/>
-      <mass value="1.5"/>
-      <inertia ixx="0.005312500000000001" iyy="0.005312500000000001" izz="0.0006250000000000001" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0017708333333333337" iyy="0.0017708333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -299,8 +299,8 @@
   <link name="leg1_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -321,8 +321,8 @@
   <link name="leg1_link_3">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.5"/>
-      <inertia ixx="0.00020833333333333337" iyy="0.00020833333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.1"/>
+      <inertia ixx="4.166666666666668e-05" iyy="4.166666666666668e-05" izz="4.166666666666668e-05" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -381,8 +381,8 @@
   <link name="leg2_link_1">
     <inertial>
       <origin xyz="0 0 -0.1" rpy="0 0 0"/>
-      <mass value="1.5"/>
-      <inertia ixx="0.005312500000000001" iyy="0.005312500000000001" izz="0.0006250000000000001" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0017708333333333337" iyy="0.0017708333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -397,8 +397,8 @@
   <link name="leg2_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -419,8 +419,8 @@
   <link name="leg2_link_3">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.5"/>
-      <inertia ixx="0.00020833333333333337" iyy="0.00020833333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.1"/>
+      <inertia ixx="4.166666666666668e-05" iyy="4.166666666666668e-05" izz="4.166666666666668e-05" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -479,8 +479,8 @@
   <link name="leg3_link_1">
     <inertial>
       <origin xyz="0 0 -0.1" rpy="0 0 0"/>
-      <mass value="1.5"/>
-      <inertia ixx="0.005312500000000001" iyy="0.005312500000000001" izz="0.0006250000000000001" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0017708333333333337" iyy="0.0017708333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -495,8 +495,8 @@
   <link name="leg3_link_2">
     <inertial>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
-      <mass value="2"/>
-      <inertia ixx="0.010833333333333334" iyy="0.010833333333333334" izz="0.0008333333333333335" ixy="0" ixz="0" iyz="0"/>
+      <mass value="1"/>
+      <inertia ixx="0.005416666666666667" iyy="0.005416666666666667" izz="0.00041666666666666675" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -517,8 +517,8 @@
   <link name="leg3_link_3">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.5"/>
-      <inertia ixx="0.00020833333333333337" iyy="0.00020833333333333337" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+      <mass value="0.1"/>
+      <inertia ixx="4.166666666666668e-05" iyy="4.166666666666668e-05" izz="4.166666666666668e-05" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <geometry>
@@ -573,5 +573,110 @@
     <parent link="leg3_link_2"/>
     <child link="leg3_link_4"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="longleg_link_0"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_0" type="continuous">
+    <parent link="base_link"/>
+    <child link="longleg_link_0"/>
+    <origin xyz="0.125 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_1"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_1" type="continuous">
+    <parent link="longleg_link_0"/>
+    <child link="longleg_link_1"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_2"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_2" type="continuous">
+    <parent link="longleg_link_1"/>
+    <child link="longleg_link_2"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_3"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_3" type="continuous">
+    <parent link="longleg_link_2"/>
+    <child link="longleg_link_3"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_4"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_4" type="continuous">
+    <parent link="longleg_link_3"/>
+    <child link="longleg_link_4"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_5"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_5" type="continuous">
+    <parent link="longleg_link_4"/>
+    <child link="longleg_link_5"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_6"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_6" type="continuous">
+    <parent link="longleg_link_5"/>
+    <child link="longleg_link_6"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_7"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_7" type="continuous">
+    <parent link="longleg_link_6"/>
+    <child link="longleg_link_7"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_8"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_8" type="continuous">
+    <parent link="longleg_link_7"/>
+    <child link="longleg_link_8"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_9"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_9" type="continuous">
+    <parent link="longleg_link_8"/>
+    <child link="longleg_link_9"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_10"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <joint name="longleg_joint_10" type="continuous">
+    <parent link="longleg_link_9"/>
+    <child link="longleg_link_10"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="longleg_link_11">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
+  <joint name="longleg_joint_11" type="continuous">
+    <parent link="longleg_link_10"/>
+    <child link="longleg_link_11"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
   </joint>
 </robot>

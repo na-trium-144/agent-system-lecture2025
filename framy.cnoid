@@ -25,13 +25,15 @@ items:
           data:
             file: "framy.urdf"
             format: URDF
-            rootPosition: [ 0, 0, 0.4 ]
+            rootPosition: [ 0, 0, 0.45 ]
             rootAttitude: [
               1, 7.34788079e-16, -7.34788079e-16,
               -7.34788079e-16, 1, 7.34788079e-16,
               7.34788079e-16, -7.34788079e-16, 1 ]
-            jointDisplacements: [ -30, 60, -30, 60, -30, 60, -30, 60 ]
-            initialRootPosition: [ 0, 0, 0.4 ]
+            jointDisplacements: [
+              0, 0, 0, 0, 0, 0, 0, 0, 90, -180,
+              180, -180, 180, -180, 180, -180, 180, -180, 180, -180 ]
+            initialRootPosition: [ 0, 0, 0.45 ]
             initialRootAttitude: [
               1, 7.34788079e-16, -7.34788079e-16,
               -7.34788079e-16, 1, 7.34788079e-16,
@@ -41,6 +43,10 @@ items:
             selfCollisionDetection: false
             lock_location: false
             scene_sensitive: true
+            link_kinematics:
+              "longleg_link_11":
+                base_frame: 0
+                offset_frame: 0
             zmp: [ 0, 0, 0 ]
           children:
             -
@@ -56,7 +62,7 @@ items:
                 reloading: false
                 export_symbols: false
         -
-          id: 5
+          id: 4
           name: "HVAC2023_athletics_field"
           plugin: Body
           class: BodyItem
@@ -83,11 +89,10 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 7
+          id: 5
           name: "AISTSimulator"
           plugin: Body
           class: AISTSimulatorItem
-          is_selected: true
           data:
             time_step: 0.001
             realtime_sync_mode: compensatory
@@ -101,7 +106,6 @@ items:
             record_collision_data: false
             controller_options: ""
             block_scene_view_edit_mode: false
-            time_sync_items: [ 4, 6 ]
             dynamicsMode: "Forward dynamics"
             integrationMode: semi-implicit_euler
             gravity: [ 0, 0, -9.80665 ]
@@ -118,7 +122,7 @@ items:
             oldAccelSensorMode: false
           children:
             -
-              id: 8
+              id: 6
               name: "WorldLogFile"
               plugin: Body
               class: WorldLogFileItem
@@ -139,7 +143,7 @@ views:
     class: ItemTreeView
     mounted: true
     state:
-      expanded: [ 1, 2, 3, 5, 7 ]
+      expanded: [ 1, 2, 4, 5 ]
   -
     id: 2
     plugin: Base
@@ -171,9 +175,9 @@ views:
         -
           camera: [ System, Perspective ]
           isCurrent: true
-          eye: [ 4.40057, 5.70843, 2.62612 ]
-          direction: [ -0.393689, -0.780533, -0.485568 ]
-          up: [ -0.218672, -0.433542, 0.874199 ]
+          eye: [ 2.20433, 5.96895, 2.59165 ]
+          direction: [ -0.462446, -0.852267, -0.244509 ]
+          up: [ -0.116612, -0.21491, 0.969647 ]
         -
           camera: [ System, Orthographic ]
           orthoHeight: 20
@@ -235,7 +239,7 @@ views:
     class: LinkPositionView
     mounted: true
     state:
-      coordinate_mode: world
+      coordinate_mode: base
       preferred_coordinate_mode: base
       show_rpy: true
       unique_rpy: false
@@ -296,7 +300,7 @@ Body:
         show_cm_projection: false
         show_zmp: false
       -
-        body_item: 5
+        body_item: 4
         show_cm: false
         show_cm_projection: false
         show_zmp: false
