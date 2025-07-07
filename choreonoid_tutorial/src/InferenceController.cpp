@@ -32,10 +32,12 @@ class InferenceController1 : public SimpleController
     Vector3 global_gravity;
     VectorXd last_action;
     VectorXd default_dof_pos;
+    VectorXd pd_default_dof_pos;
     VectorXd target_dof_pos;
     // VectorXd target_dof_pos_prev;
     // VectorXd target_dof_vel;
     std::vector<std::string> motor_dof_names;
+    std::vector<std::string> pd_motor_dof_names;
 
     torch::jit::script::Module model;
 
@@ -127,11 +129,22 @@ public:
         for(int i=0; i<dof_names->size(); ++i){
             motor_dof_names.push_back(dof_names->at(i)->toString());
         }
+        auto pd_dof_names = env_cfg->findListing("pd_dof_names");
+        pd_motor_dof_names.clear();
+        for(int i=0; i<pd_dof_names->size(); ++i){
+            pd_motor_dof_names.push_back(pd_dof_names->at(i)->toString());
+        }
+        pd_default_dof_pos = VectorXd::Zero(pd_motor_dof_names.size());
 
         auto default_angles = env_cfg->findMapping("default_joint_angles");
         for(int i=0; i<motor_dof_names.size(); ++i){
             std::string name = motor_dof_names[i];
             default_dof_pos[i] = default_angles->get(name, 0.0);
+        }
+        auto pd_default_angles = env_cfg->findMapping("pd_default_joint_angles");
+        for(int i=0; i<pd_motor_dof_names.size(); ++i){
+            std::string name = pd_motor_dof_names[i];
+            pd_default_dof_pos[i] = pd_default_angles->get(name, 0.0);
         }
 
         // use default_dof_pos for initializing target angles
@@ -291,6 +304,15 @@ public:
             double u = target_dof_pos[i];
             joint->u() = u;
         }
+        for(int i=0; i<pd_motor_dof_names.size(); ++i) {
+            auto joint = ioBody->joint(pd_motor_dof_names[i]);
+            double q = joint->q();
+            double dq = joint->dq();
+            // double u = P_gain * (pd_default_dof_pos[i] - q) + D_gain * (target_dof_vel[i] - dq);
+            double u = P_gain * (pd_default_dof_pos[i] - q) + D_gain * (- dq);
+            joint->u() = u;
+        }
+        
 
         ++step_count;
 
