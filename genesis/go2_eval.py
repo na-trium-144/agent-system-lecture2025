@@ -41,8 +41,12 @@ def main():
     with torch.no_grad():
         while True:
             actions = policy(obs)
+            # print(actions)
             obs, _, rews, dones, infos = env.step(actions)
-            print("command: ", env.commands)
+            # print("command: ", env.commands)
+            # print("vel:", env.base_lin_vel[:, :])
+            # print("vel_rew_target:", torch.tanh(100 * env.base_lin_vel[:, 2]) * torch.sqrt(torch.sum(torch.square(env.base_lin_vel[:, :]), dim=1)))
+            # print("rew_base_height:", env._reward_base_height())
 
 
 if __name__ == "__main__":

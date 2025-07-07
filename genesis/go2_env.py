@@ -65,7 +65,7 @@ class Go2Env:
             ),
         )
 
-        if self.env_cfg["jump"]:
+        if self.env_cfg.get("jump"):
             self.wall = self.scene.add_entity(gs.morphs.Box(
                 pos=(2.3 + 1, 0, 1.5 - 1),
                 size=(2, 2, 2),
@@ -78,6 +78,7 @@ class Go2Env:
 
         # names to indices
         self.motor_dofs = [self.robot.get_joint(name).dof_idx_local for name in self.env_cfg["dof_names"]]
+        self.pd_motor_dofs = [self.robot.get_joint(name).dof_idx_local for name in self.env_cfg.get("pd_dof_names", [])]
 
         # PD control parameters
         # self.robot.set_dofs_kp([self.env_cfg["kp"]] * self.num_actions, self.motor_dofs)
@@ -121,6 +122,11 @@ class Go2Env:
             device=self.device,
             dtype=gs.tc_float,
         )
+        self.pd_default_dof_pos = torch.tensor(
+            [self.env_cfg["pd_default_joint_angles"][name] for name in self.env_cfg.get("pd_dof_names", [])],
+            device=self.device,
+            dtype=gs.tc_float,
+        )
         self.extras = dict()  # extra information for logging
 
     def _resample_commands(self, envs_idx):
@@ -139,13 +145,15 @@ class Go2Env:
             random_pos = self.robot.get_pos()[...]
             random_pos[:, 2] += gs_rand_float(*self.env_cfg["random_move_z"], (len(random_pos),), self.device)
             self.robot.set_pos(random_pos, zero_velocity=False)
-        if self.env_cfg["jump"]:
+        if self.env_cfg.get("walking_only"):
+            self.robot.control_dofs_position(self.pd_default_dof_pos.repeat(len(self.robot.get_pos()), 1), self.pd_motor_dofs)
+        if self.env_cfg.get("jump"):
             self.wall.set_pos(self.box_pos.repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
             self.wall.set_quat(torch.tensor([1, 0, 0, 0], device=self.device).repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
 
         self.scene.step()
 
-        if self.env_cfg["jump"]:
+        if self.env_cfg.get("jump"):
             self.wall.set_pos(self.box_pos.repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
             self.wall.set_quat(torch.tensor([1, 0, 0, 0], device=self.device).repeat(len(self.wall.get_pos()), 1), zero_velocity=True)
 
@@ -228,6 +236,13 @@ class Go2Env:
             zero_velocity=True,
             envs_idx=envs_idx,
         )
+        if len(self.pd_motor_dofs):
+            self.robot.set_dofs_position(
+                position=self.pd_default_dof_pos.repeat(len(envs_idx), 1),
+                dofs_idx_local=self.pd_motor_dofs,
+                zero_velocity=True,
+                envs_idx=envs_idx,
+            )
 
         # reset base
         self.base_pos[envs_idx] = self.base_init_pos
@@ -238,7 +253,7 @@ class Go2Env:
         self.base_ang_vel[envs_idx] = 0
         self.robot.zero_all_dofs_velocity(envs_idx)
 
-        if self.env_cfg["jump"]:
+        if self.env_cfg.get("jump"):
             self.box_pos = torch.tensor([[2.1 + random.random() * 0.4 + 1, 0, 1.3 + random.random() * 0.4 - 1]], device=self.device)
 
         # reset buffers
@@ -278,8 +293,30 @@ class Go2Env:
         ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2])
         return torch.exp(-ang_vel_error / self.reward_cfg["tracking_sigma"])
 
+    def _reward_tracking_jump_z(self):
+        lin_vel_error = torch.square(0.5 - self.base_lin_vel[:, 2]) * (self.base_pos[:, 2] < 1)
+        return torch.exp(-lin_vel_error / self.reward_cfg["tracking_sigma"])
+
+    def _reward_tracking_jump_action(self):
+        long_dofs = self.dof_pos[:, 8:] - self.default_dof_pos[8:]
+        long_actions = self.dof_vel[:, 8:]
+        angle = torch.zeros((len(long_dofs),), device=self.device)
+        action_jump = torch.zeros((len(long_dofs),), device=self.device)
+        for i in range(12):
+            angle += long_dofs[:, i]
+            # iが偶数: angle負が下方向 * action負が下方向
+            # iが奇数: angle正が下方向 * action正が下方向
+            action_jump_1 = torch.tanh(math.pi / 2 - angle * (-1 if i % 2 == 0 else 1)) * long_actions[:, i] * (-1 if i % 2 == 0 else 1)
+            if torch.isnan(action_jump_1).any():
+                print(f"NaN detected in action_jump_1 at step {i}, resetting to zero.")
+                print(f"angle: {angle}")
+                print(f"long_actions: {long_actions[:, i]}")
+                action_jump_1 = torch.zeros_like(action_jump_1)
+            action_jump += action_jump_1
+        return -torch.exp(-action_jump / 100) * (self.base_pos[:, 2] < 1)
+
     def _reward_tracking_jump_vel(self):
-        lin_vel_error = torch.square(0.3 - torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))
+        lin_vel_error = torch.square(0.5 - torch.tanh(100 * self.base_lin_vel[:, 2]) * torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))
         return torch.exp(-lin_vel_error / self.reward_cfg["tracking_sigma"])
 
     def _reward_tracking_jump_traj(self):
@@ -303,7 +340,7 @@ class Go2Env:
 
     def _reward_similar_to_default_long(self):
         # Penalize joint poses far away from default pose
-        return torch.sum(torch.abs(self.dof_pos[:, 8:] - self.default_dof_pos[8:]), dim=1)
+        return torch.sum(torch.log(0.1 + torch.abs(self.dof_pos[:, 8:] - self.default_dof_pos[8:])), dim=1)
 
     def _reward_base_height(self):
         # Penalize base height lower than target
@@ -339,7 +376,8 @@ class Go2Env:
         # kv = torch.rand(num_dofs, device=self.device) * (kv_max - kv_min) + kv_min
         # self.robot.set_dofs_kp(kp)
         # self.robot.set_dofs_kv(kv)
-        self.output_factor = math.exp(random.random() * 5 - 3)
+        self.output_factor = random.random() * 2 + 0.1
+        # self.output_factor = math.exp(random.random() * 5 - 3)
 
     def randomize_armature(self):
         # joint's rotor inertia

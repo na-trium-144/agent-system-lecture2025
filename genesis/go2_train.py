@@ -62,15 +62,24 @@ def get_train_cfg(exp_name, max_iterations):
 def get_cfgs(exp_name: str):
     default_joint_angles = {}
     dof_names = []
+    pd_default_joint_angles = {}
+    pd_dof_names = []
     for i in range(4):
         default_joint_angles[f"leg{i}_joint_1"] = -math.pi / 6
         default_joint_angles[f"leg{i}_joint_2"] = math.pi / 3
         dof_names += [f"leg{i}_joint_1", f"leg{i}_joint_2"]
-    default_joint_angles[f"longleg_joint_0"] = math.pi / 2
-    dof_names += [f"longleg_joint_0"]
-    for i in range(1, 12):
-        default_joint_angles[f"longleg_joint_{i}"] = -math.pi if i % 2 == 1 else math.pi
-        dof_names += [f"longleg_joint_{i}"]
+    if exp_name == "walking_only":
+        pd_default_joint_angles[f"longleg_joint_0"] = math.pi / 2
+        pd_dof_names += [f"longleg_joint_0"]
+        for i in range(1, 12):
+            pd_default_joint_angles[f"longleg_joint_{i}"] = -math.pi if i % 2 == 1 else math.pi
+            pd_dof_names += [f"longleg_joint_{i}"]
+    else:
+        default_joint_angles[f"longleg_joint_0"] = math.pi / 2
+        dof_names += [f"longleg_joint_0"]
+        for i in range(1, 12):
+            default_joint_angles[f"longleg_joint_{i}"] = -math.pi if i % 2 == 1 else math.pi
+            dof_names += [f"longleg_joint_{i}"]
     env_cfg = {
         "num_actions": len(dof_names),
         # joint/link names
@@ -78,16 +87,19 @@ def get_cfgs(exp_name: str):
         "dof_names": dof_names,
 
         "jump": exp_name == "jump",
+        "walking_only": exp_name == "walking_only",
+        "pd_default_joint_angles": pd_default_joint_angles,
+        "pd_dof_names": pd_dof_names,
         # PD
         "kp": 20.0,
         "kd": 0.5,
         # termination
-        "termination_if_roll_greater_than": 10,  # degree
-        "termination_if_pitch_greater_than": 10,
+        "termination_if_roll_greater_than": 180 if exp_name == "jump" else 10,  # degree
+        "termination_if_pitch_greater_than": 180 if exp_name == "jump" else 10,
         # base pose
         "base_init_pos": [0.0, 0.0, 0.45],
         "base_init_quat": [1.0, 0.0, 0.0, 0.0],
-        "random_move_z": [0, 0.3] if exp_name != "jump" else None,
+        "random_move_z": [0, 0.3] if exp_name == "walking_only" else None,
         "episode_length_s": 40.0,
         "resampling_time_s": 4.0,
         "action_scale": 0.25,
@@ -110,20 +122,32 @@ def get_cfgs(exp_name: str):
             "base_height_target": 0.3,
             "feet_height_target": 0.075,
             "reward_scales": {
-                # "tracking_lin_vel": 1.0,
-                # "tracking_ang_vel": 3.0,
-                "tracking_jump_vel": 10.0,
-                "tracking_jump_traj": 10.0,
-                # "lin_vel_z": -1.0,
-                # "base_height": -100.0,
+                # "tracking_jump_z": -10.0,
+                "tracking_jump_action": 100.0,
+                # "tracking_jump_vel": 2.0,
+                # "tracking_jump_traj": 2.0,
                 "action_rate": -0.002,
+                # "similar_to_default": -0.1,
+            },
+        }
+    elif exp_name == "walking_only":
+        reward_cfg = {
+            "tracking_sigma": 0.25,
+            "base_height_target": 0.3,
+            "feet_height_target": 0.075,
+            "reward_scales": {
+                "tracking_lin_vel": 1.0,
+                "tracking_ang_vel": 3.0,
+                "lin_vel_z": -1.0,
+                "base_height": -50.0,
+                "action_rate": -0.005,
                 "similar_to_default": -0.1,
             },
         }
     else:
         reward_cfg = {
             "tracking_sigma": 0.25,
-            "base_height_target": 0.3,
+            "base_height_target": 0.4,
             "feet_height_target": 0.075,
             "reward_scales": {
                 "tracking_lin_vel": 1.0,
@@ -139,7 +163,7 @@ def get_cfgs(exp_name: str):
         "num_commands": 3,
         "lin_vel_x_range": [0, 2],
         "lin_vel_y_range": [0, 0],
-        "ang_vel_range": [-2, 2],
+        "ang_vel_range": [-1, 1],
     }
 
     return env_cfg, obs_cfg, reward_cfg, command_cfg
