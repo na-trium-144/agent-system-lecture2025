@@ -123,7 +123,8 @@ def get_cfgs(exp_name: str):
             "feet_height_target": 0.075,
             "reward_scales": {
                 # "tracking_jump_z": -10.0,
-                "tracking_jump_action": 100.0,
+                "tracking_jump_action": 10.0,
+                "tracking_jump_action_ang": 10.0,
                 # "tracking_jump_vel": 2.0,
                 # "tracking_jump_traj": 2.0,
                 "action_rate": -0.002,
@@ -142,12 +143,13 @@ def get_cfgs(exp_name: str):
                 "base_height": -50.0,
                 "action_rate": -0.005,
                 "similar_to_default": -0.1,
+                "obj_not_moving": 3,
             },
         }
     else:
         reward_cfg = {
             "tracking_sigma": 0.25,
-            "base_height_target": 0.4,
+            "base_height_target": 0.3,
             "feet_height_target": 0.075,
             "reward_scales": {
                 "tracking_lin_vel": 1.0,
@@ -156,7 +158,7 @@ def get_cfgs(exp_name: str):
                 "base_height": -50.0,
                 "action_rate": -0.002,
                 "similar_to_default": -0.05,
-                "similar_to_default_long": -1.0,
+                "similar_to_default_long": -5,
             },
         }
     command_cfg = {

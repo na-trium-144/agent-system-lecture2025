@@ -72,6 +72,15 @@ class Go2Env:
                 # fixed=True,
             ))
             self.box_pos = torch.tensor([[2.1 + random.random() * 0.4 + 1, 0, 1.3 + random.random() * 0.4 - 1]], device=self.device)
+        else:
+            a = random.random() * 2 * math.pi
+            r = random.random() * 1 + 0.7
+            self.box_pos = torch.tensor([[r * math.cos(a), r * math.sin(a), 0.02]], device=self.device)
+            self.obj = self.scene.add_entity(gs.morphs.Box(
+                pos=tuple(self.box_pos[0, :].detach().cpu()),
+                size=(1, 1, 0.04),
+                # fixed=True,
+            ))
 
         # build
         self.scene.build(n_envs=num_envs)
@@ -117,6 +126,7 @@ class Go2Env:
         self.last_dof_vel = torch.zeros_like(self.actions)
         self.base_pos = torch.zeros((self.num_envs, 3), device=self.device, dtype=gs.tc_float)
         self.base_quat = torch.zeros((self.num_envs, 4), device=self.device, dtype=gs.tc_float)
+        self.base_euler = torch.zeros((self.num_envs, 3), device=self.device, dtype=gs.tc_float)
         self.default_dof_pos = torch.tensor(
             [self.env_cfg["default_joint_angles"][name] for name in self.env_cfg["dof_names"]],
             device=self.device,
@@ -184,6 +194,12 @@ class Go2Env:
         self.reset_buf = self.episode_length_buf > self.max_episode_length
         self.reset_buf |= torch.abs(self.base_euler[:, 1]) > self.env_cfg["termination_if_pitch_greater_than"]
         self.reset_buf |= torch.abs(self.base_euler[:, 0]) > self.env_cfg["termination_if_roll_greater_than"]
+        self.reset_buf |= torch.isnan(self.base_pos).any(dim=1)
+        self.reset_buf |= torch.isinf(self.base_pos).any(dim=1)
+        self.reset_buf |= torch.isnan(self.base_quat).any(dim=1)
+        self.reset_buf |= torch.isinf(self.base_quat).any(dim=1)
+        self.reset_buf |= torch.isnan(self.dof_pos).any(dim=1)
+        self.reset_buf |= torch.isinf(self.dof_pos).any(dim=1)
 
         time_out_idx = (self.episode_length_buf > self.max_episode_length).nonzero(as_tuple=False).flatten()
         self.extras["time_outs"] = torch.zeros_like(self.reset_buf, device=self.device, dtype=gs.tc_float)
@@ -211,6 +227,17 @@ class Go2Env:
             ],
             axis=-1,
         )
+        if self.obs_buf.isnan().any():
+            raise Exception(f"nan in obs, at col {torch.nonzero(self.obs_buf.isnan().any(dim=0), as_tuple=True)}")
+        if self.rew_buf.isnan().any():
+            for name, reward_func in self.reward_functions.items():
+                rew = reward_func() * self.reward_scales[name]
+                if rew.isnan().any():
+                    raise Exception(f"nan in rew {name}")
+        if self.reset_buf.isnan().any():
+            raise Exception(f"nan in reset")
+        if self.actions.isnan().any():
+            raise Exception(f"nan in actions")
 
         self.last_actions[:] = self.actions[:]
         self.last_dof_vel[:] = self.dof_vel[:]
@@ -230,6 +257,7 @@ class Go2Env:
         # reset dofs
         self.dof_pos[envs_idx] = self.default_dof_pos
         self.dof_vel[envs_idx] = 0.0
+        self.dof_force[envs_idx] = 0.0
         self.robot.set_dofs_position(
             position=self.dof_pos[envs_idx],
             dofs_idx_local=self.motor_dofs,
@@ -247,14 +275,22 @@ class Go2Env:
         # reset base
         self.base_pos[envs_idx] = self.base_init_pos
         self.base_quat[envs_idx] = self.base_init_quat.reshape(1, -1)
+        self.base_euler[envs_idx] = 0
         self.robot.set_pos(self.base_pos[envs_idx], zero_velocity=False, envs_idx=envs_idx)
         self.robot.set_quat(self.base_quat[envs_idx], zero_velocity=False, envs_idx=envs_idx)
         self.base_lin_vel[envs_idx] = 0
         self.base_ang_vel[envs_idx] = 0
         self.robot.zero_all_dofs_velocity(envs_idx)
+        self.projected_gravity[envs_idx] = 0
 
         if self.env_cfg.get("jump"):
             self.box_pos = torch.tensor([[2.1 + random.random() * 0.4 + 1, 0, 1.3 + random.random() * 0.4 - 1]], device=self.device)
+        else:
+            a = random.random() * 2 * math.pi
+            r = random.random() * 1 + 0.7
+            self.box_pos = torch.tensor([[r * math.cos(a), r * math.sin(a), 0.02]], device=self.device)
+            self.obj.set_pos(self.box_pos.repeat(len(self.obj.get_pos()), 1), zero_velocity=True)
+            self.obj.set_quat(torch.tensor([1, 0, 0, 0], device=self.device).repeat(len(self.obj.get_pos()), 1), zero_velocity=True)
 
         # reset buffers
         self.last_actions[envs_idx] = 0.0
@@ -299,21 +335,38 @@ class Go2Env:
 
     def _reward_tracking_jump_action(self):
         long_dofs = self.dof_pos[:, 8:] - self.default_dof_pos[8:]
+        if long_dofs.isnan().any():
+            print(f"nan in long_dofs")
+            long_dofs = torch.nan_to_num(long_dofs)
         long_actions = self.dof_vel[:, 8:]
+        if long_actions.isnan().any():
+            print(f"nan in long_actions")
+            long_actions = torch.nan_to_num(long_actions)
         angle = torch.zeros((len(long_dofs),), device=self.device)
         action_jump = torch.zeros((len(long_dofs),), device=self.device)
         for i in range(12):
             angle += long_dofs[:, i]
+            if angle.isnan().any():
+                print(f"nan in angle")
+                angle = torch.nan_to_num(angle)
             # iが偶数: angle負が下方向 * action負が下方向
             # iが奇数: angle正が下方向 * action正が下方向
-            action_jump_1 = torch.tanh(math.pi / 2 - angle * (-1 if i % 2 == 0 else 1)) * long_actions[:, i] * (-1 if i % 2 == 0 else 1)
-            if torch.isnan(action_jump_1).any():
-                print(f"NaN detected in action_jump_1 at step {i}, resetting to zero.")
-                print(f"angle: {angle}")
-                print(f"long_actions: {long_actions[:, i]}")
-                action_jump_1 = torch.zeros_like(action_jump_1)
-            action_jump += action_jump_1
-        return -torch.exp(-action_jump / 100) * (self.base_pos[:, 2] < 1)
+            action_jump += torch.tanh(math.pi / 2 - angle * (-1 if i % 2 == 0 else 1)) * long_actions[:, i] * (-1 if i % 2 == 0 else 1)
+            if action_jump.isnan().any():
+                r = torch.nonzero(action_jump.isnan())
+                print(f"nan in action_jump {r}, angle={angle[r]}, long_actions={long_actions[r, i]}")
+                action_jump = torch.nan_to_num(action_jump)
+        ret = action_jump * (self.base_pos[:, 2] < 1)
+        if ret.isnan().any():
+            r = torch.nonzero(ret.isnan())
+            print(f"nan in return value of action_jump {r}, {ret[r]}, action_jump={action_jump[r]}, base_pos={self.base_pos[r, 2]}")
+            ret = torch.nan_to_num(ret)
+        return ret
+
+    def _reward_tracking_jump_action_ang(self):
+        long_dofs = self.dof_pos[:, 9:19]
+        long_dofs_normalized = long_dofs * torch.tensor([1, -1, 1, -1, 1, -1, 1, -1, 1, -1], device=self.device)
+        return torch.exp(-torch.var(long_dofs_normalized, dim=1) / 0.1)
 
     def _reward_tracking_jump_vel(self):
         lin_vel_error = torch.square(0.5 - torch.tanh(100 * self.base_lin_vel[:, 2]) * torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))
@@ -334,13 +387,16 @@ class Go2Env:
         # Penalize changes in actions
         return torch.sum(torch.square(self.last_actions - self.actions), dim=1)
 
+    def _reward_obj_not_moving(self):
+        return torch.exp(-torch.sum(torch.square(self.obj.get_pos() - self.box_pos), dim=1) / 0.1)
+
     def _reward_similar_to_default(self):
         # Penalize joint poses far away from default pose
         return torch.sum(torch.abs(self.dof_pos[:, :8] - self.default_dof_pos[:8]), dim=1)
 
     def _reward_similar_to_default_long(self):
         # Penalize joint poses far away from default pose
-        return torch.sum(torch.log(0.1 + torch.abs(self.dof_pos[:, 8:] - self.default_dof_pos[8:])), dim=1)
+        return torch.sum(torch.abs(self.dof_pos[:, 8:] - self.default_dof_pos[8:]), dim=1)
 
     def _reward_base_height(self):
         # Penalize base height lower than target
