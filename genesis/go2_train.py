@@ -200,6 +200,8 @@ def main():
     env_cfg["substeps"] = args.substeps
 
     if os.path.exists(log_dir):
+        if input(f"{log_dir} already exists!!! are you sure? [y/N]") != "y":
+            raise Exception(f"{log_dir} already exists!!!")
         shutil.rmtree(log_dir)
     os.makedirs(log_dir, exist_ok=True)
 
