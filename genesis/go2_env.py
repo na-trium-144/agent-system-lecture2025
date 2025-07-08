@@ -72,7 +72,7 @@ class Go2Env:
                 # fixed=True,
             ))
             self.box_pos = torch.tensor([[2.1 + random.random() * 0.4 + 1, 0, 1.3 + random.random() * 0.4 - 1]], device=self.device)
-        else:
+        elif self.env_cfg.get("obj", True):
             a = random.random() * 2 * math.pi
             r = random.random() * 1 + 0.7
             self.box_pos = torch.tensor([[r * math.cos(a), r * math.sin(a), 0.02]], device=self.device)
@@ -195,11 +195,11 @@ class Go2Env:
         self.reset_buf |= torch.abs(self.base_euler[:, 1]) > self.env_cfg["termination_if_pitch_greater_than"]
         self.reset_buf |= torch.abs(self.base_euler[:, 0]) > self.env_cfg["termination_if_roll_greater_than"]
         self.reset_buf |= torch.isnan(self.base_pos).any(dim=1)
-        self.reset_buf |= torch.isinf(self.base_pos).any(dim=1)
-        self.reset_buf |= torch.isnan(self.base_quat).any(dim=1)
-        self.reset_buf |= torch.isinf(self.base_quat).any(dim=1)
+        self.reset_buf |= (torch.abs(self.base_pos) > 100).any(dim=1)
         self.reset_buf |= torch.isnan(self.dof_pos).any(dim=1)
-        self.reset_buf |= torch.isinf(self.dof_pos).any(dim=1)
+        self.reset_buf |= (torch.abs(self.dof_pos) > 4 * math.pi).any(dim=1)
+        self.reset_buf |= torch.isnan(self.dof_vel).any(dim=1)
+        self.reset_buf |= (torch.abs(self.dof_vel) > 4 * math.pi / 0.001).any(dim=1)
 
         time_out_idx = (self.episode_length_buf > self.max_episode_length).nonzero(as_tuple=False).flatten()
         self.extras["time_outs"] = torch.zeros_like(self.reset_buf, device=self.device, dtype=gs.tc_float)
@@ -285,7 +285,7 @@ class Go2Env:
 
         if self.env_cfg.get("jump"):
             self.box_pos = torch.tensor([[2.1 + random.random() * 0.4 + 1, 0, 1.3 + random.random() * 0.4 - 1]], device=self.device)
-        else:
+        elif self.env_cfg.get("obj", True):
             a = random.random() * 2 * math.pi
             r = random.random() * 1 + 0.7
             self.box_pos = torch.tensor([[r * math.cos(a), r * math.sin(a), 0.02]], device=self.device)
@@ -368,6 +368,10 @@ class Go2Env:
         long_dofs_normalized = long_dofs * torch.tensor([1, -1, 1, -1, 1, -1, 1, -1, 1, -1], device=self.device)
         return torch.exp(-torch.var(long_dofs_normalized, dim=1) / 0.1)
 
+    def _reward_tracking_jump_pd(self):
+        u = 20 * (0 - self.dof_pos[:, 8:]) + 0.5 * (0 - self.dof_vel[:, 8:])
+        return -torch.sum(torch.abs(self.actions[:, 8:] - u), dim=1) + 800
+
     def _reward_tracking_jump_vel(self):
         lin_vel_error = torch.square(0.5 - torch.tanh(100 * self.base_lin_vel[:, 2]) * torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))
         return torch.exp(-lin_vel_error / self.reward_cfg["tracking_sigma"])
@@ -387,8 +391,8 @@ class Go2Env:
         # Penalize changes in actions
         return torch.sum(torch.square(self.last_actions - self.actions), dim=1)
 
-    def _reward_obj_not_moving(self):
-        return torch.exp(-torch.sum(torch.square(self.obj.get_pos() - self.box_pos), dim=1) / 0.1)
+    def _reward_obj_moving(self):
+        return torch.sum(torch.square(self.obj.get_pos() - self.box_pos), dim=1)
 
     def _reward_similar_to_default(self):
         # Penalize joint poses far away from default pose

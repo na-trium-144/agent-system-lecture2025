@@ -86,16 +86,17 @@ def get_cfgs(exp_name: str):
         "default_joint_angles": default_joint_angles,
         "dof_names": dof_names,
 
-        "jump": exp_name == "jump",
+        "jump": "jump" in exp_name,
         "walking_only": exp_name == "walking_only",
+        "obj": exp_name == "walking_only" and False,
         "pd_default_joint_angles": pd_default_joint_angles,
         "pd_dof_names": pd_dof_names,
         # PD
         "kp": 20.0,
         "kd": 0.5,
         # termination
-        "termination_if_roll_greater_than": 180 if exp_name == "jump" else 10,  # degree
-        "termination_if_pitch_greater_than": 180 if exp_name == "jump" else 10,
+        "termination_if_roll_greater_than": 180 if "jump" in exp_name else 10,  # degree
+        "termination_if_pitch_greater_than": 180 if "jump" in exp_name else 10,
         # base pose
         "base_init_pos": [0.0, 0.0, 0.45],
         "base_init_quat": [1.0, 0.0, 0.0, 0.0],
@@ -131,6 +132,15 @@ def get_cfgs(exp_name: str):
                 # "similar_to_default": -0.1,
             },
         }
+    elif exp_name == "jump_pd":
+        reward_cfg = {
+            "tracking_sigma": 0.1,
+            "base_height_target": 0.3,
+            "feet_height_target": 0.075,
+            "reward_scales": {
+                "tracking_jump_pd": 1.0,
+            },
+        }
     elif exp_name == "walking_only":
         reward_cfg = {
             "tracking_sigma": 0.25,
@@ -143,7 +153,7 @@ def get_cfgs(exp_name: str):
                 "base_height": -50.0,
                 "action_rate": -0.005,
                 "similar_to_default": -0.1,
-                "obj_not_moving": 3,
+                # "obj_moving": -0.3,
             },
         }
     else:
