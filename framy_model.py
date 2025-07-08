@@ -395,7 +395,7 @@ for i in range(longleg_num):
             E.collision(
                 E.geometry(E.box(size=f"0.05 0.05 {longleg_size}")),
                 E.origin(xyz=f"0 0 {-longleg_size/2}", rpy="0 0 0"),
-            ) if i == longleg_num - 1 else "",
+            ),
             name=f"longleg_link_{i}",
         ),
         E.joint(

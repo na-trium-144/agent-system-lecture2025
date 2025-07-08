@@ -574,77 +574,308 @@
     <child link="leg3_link_4"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
-  <link name="longleg_link_0"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_0">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_0" type="continuous">
     <parent link="base_link"/>
     <child link="longleg_link_0"/>
     <origin xyz="0.125 0 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_1"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_1">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_1" type="continuous">
     <parent link="longleg_link_0"/>
     <child link="longleg_link_1"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_2"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_2">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_2" type="continuous">
     <parent link="longleg_link_1"/>
     <child link="longleg_link_2"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_3"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_3">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_3" type="continuous">
     <parent link="longleg_link_2"/>
     <child link="longleg_link_3"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_4"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_4">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_4" type="continuous">
     <parent link="longleg_link_3"/>
     <child link="longleg_link_4"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_5"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_5">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_5" type="continuous">
     <parent link="longleg_link_4"/>
     <child link="longleg_link_5"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_6"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_6">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_6" type="continuous">
     <parent link="longleg_link_5"/>
     <child link="longleg_link_6"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_7"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_7">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_7" type="continuous">
     <parent link="longleg_link_6"/>
     <child link="longleg_link_7"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_8"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_8">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_8" type="continuous">
     <parent link="longleg_link_7"/>
     <child link="longleg_link_8"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_9"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_9">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_9" type="continuous">
     <parent link="longleg_link_8"/>
     <child link="longleg_link_9"/>
     <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="longleg_link_10"><inertial><origin xyz="0 0 -0.125" rpy="0 0 0"/><mass value="0.5"/><inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/></inertial><visual><geometry><box size="0.05 0.05 0.25"/></geometry><origin xyz="0 0 -0.125" rpy="0 0 0"/><material name="a"><color rgba="0.8 0.8 0.8 1"/></material></visual></link>
+  <link name="longleg_link_10">
+    <inertial>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.0027083333333333334" iyy="0.0027083333333333334" izz="0.00020833333333333337" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+      <material name="a">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.25"/>
+      </geometry>
+      <origin xyz="0 0 -0.125" rpy="0 0 0"/>
+    </collision>
+  </link>
   <joint name="longleg_joint_10" type="continuous">
     <parent link="longleg_link_9"/>
     <child link="longleg_link_10"/>

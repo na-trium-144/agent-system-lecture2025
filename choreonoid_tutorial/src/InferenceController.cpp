@@ -266,8 +266,8 @@ public:
         }
 
         double distance = std::sqrt(diff_x * diff_x + diff_y * diff_y);
-        command[2] = std::clamp(4 * distance * diff_yaw, ang_vel_range[0]*ck.ang, ang_vel_range[1]*ck.ang);
-        command[0] = std::clamp(1 / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*ck.lin, lin_vel_x_range[1]*ck.lin);
+        command[2] = std::clamp(ang_vel_range[1] * 4 * distance * diff_yaw, ang_vel_range[0]*ck.ang, ang_vel_range[1]*ck.ang);
+        command[0] = std::clamp(lin_vel_x_range[1] * ck.lin / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*ck.lin, lin_vel_x_range[1]*ck.lin);
         command[1] = std::clamp(0.0, lin_vel_y_range[0]*ck.lin, lin_vel_y_range[1]*ck.lin);
         std::cout << "phase: " << phase << ", command velocity:" << command.transpose() << std::endl;
         // std::cout << ck.x << ", " << ck.y << ", " << ck.lin << ", " << ck.ang << ", " << ck.threshold << std::endl;

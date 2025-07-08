@@ -330,7 +330,7 @@ class Go2Env:
         return torch.exp(-ang_vel_error / self.reward_cfg["tracking_sigma"])
 
     def _reward_tracking_jump_z(self):
-        lin_vel_error = torch.square(0.5 - self.base_lin_vel[:, 2]) * (self.base_pos[:, 2] < 1)
+        lin_vel_error = torch.square(1 - self.base_lin_vel[:, 2]) * (self.base_pos[:, 2] < 1)
         return torch.exp(-lin_vel_error / self.reward_cfg["tracking_sigma"])
 
     def _reward_tracking_jump_action(self):
@@ -366,22 +366,24 @@ class Go2Env:
     def _reward_tracking_jump_action_ang(self):
         long_dofs = self.dof_pos[:, 9:19]
         long_dofs_normalized = long_dofs * torch.tensor([1, -1, 1, -1, 1, -1, 1, -1, 1, -1], device=self.device)
-        return torch.exp(-torch.var(long_dofs_normalized, dim=1) / 0.1)
+        return torch.exp(-torch.var(long_dofs_normalized, dim=1)) - 1
 
     def _reward_tracking_jump_pd(self):
-        u = 20 * (0 - self.dof_pos[:, 8:]) + 0.5 * (0 - self.dof_vel[:, 8:])
-        return -torch.sum(torch.abs(self.actions[:, 8:] - u), dim=1) + 800
+        p = 40
+        d = 2
+        u = p * (0 - self.dof_pos[:, 8:]) + d * (0 - self.dof_vel[:, 8:])
+        return -torch.sum(torch.abs(self.actions[:, 8:] * self.output_factor - u), dim=1) * (self.base_pos[:, 2] < 0.7) + 1600
 
     def _reward_tracking_jump_vel(self):
         lin_vel_error = torch.square(0.5 - torch.tanh(100 * self.base_lin_vel[:, 2]) * torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))
-        return torch.exp(-lin_vel_error / self.reward_cfg["tracking_sigma"])
+        return torch.exp(-lin_vel_error / self.reward_cfg["tracking_sigma"]) - 1
 
     def _reward_tracking_jump_traj(self):
         wall_origin = self.wall.get_pos().detach()
         wall_origin[:, 0] -= 1
         wall_origin[:, 2] -= 1
         radius_error = torch.square(2.0 - torch.sqrt(torch.sum(torch.square(self.base_pos[:, :] - wall_origin), dim=1)))
-        return torch.exp(-radius_error / 0.2)
+        return torch.exp(-radius_error / 0.2) - 1
 
     def _reward_lin_vel_z(self):
         # Penalize z axis base linear velocity

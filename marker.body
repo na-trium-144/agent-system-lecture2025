@@ -1,0 +1,23 @@
+format: ChoreonoidBody
+formatVersion: 1.0
+angleUnit: degree
+name: Marker
+links:
+  - name: marker
+    mass: 1
+    inertia: [1, 0, 0, 1, 0, 1]
+    elements:
+    - type: Transform
+      rotation: [[1, 0, 0, 90]]
+      elements:
+        Shape:
+          geometry:
+            type: Cylinder
+            radius: 0.05
+            height: 0.02
+          appearance:
+            material:
+              diffuseColor: [0.5, 0, 0]
+              specularColor: [1, 0, 0]
+              shininess: 0.6
+
