@@ -20,20 +20,16 @@ struct Checkpoint{
     double lin;
     double ang;
     double threshold;
+    bool jump;
 };
 
-class InferenceController1 : public SimpleController
-{
-    Body* ioBody;
-    double dt;
-    double inference_dt = 0.02; // genesis dt is 0.02 sec
-    size_t inference_interval_steps;
-
+    Vector3d command;
     Vector3 global_gravity;
+
+struct InferenceModel {
     VectorXd last_action;
     VectorXd default_dof_pos;
     VectorXd pd_default_dof_pos;
-    VectorXd target_dof_pos;
     // VectorXd target_dof_pos_prev;
     // VectorXd target_dof_vel;
     std::vector<std::string> motor_dof_names;
@@ -53,53 +49,19 @@ class InferenceController1 : public SimpleController
     double dof_force_scale;
     Vector3 command_scale;
 
-    // Command resampling
-    int phase = 0;
-    std::vector<Checkpoint> checkpoints;
-    Vector3d command;
     Vector2d lin_vel_x_range;
     Vector2d lin_vel_y_range;
     Vector2d ang_vel_range;
-    size_t resample_interval_steps;
-    size_t step_count = 0;
 
-public:
-    virtual bool initialize(SimpleControllerIO* io) override
-    {
-        dt = io->timeStep();
-        ioBody = io->body();
-
-        inference_interval_steps = static_cast<int>(std::round(inference_dt / dt));
+    InferenceModel(const char *target_path, double dt){
         std::ostringstream oss;
-        oss << "inference_interval_steps: " << inference_interval_steps;
-        MessageView::instance()->putln(oss.str());
 
-        global_gravity = Vector3(0.0, 0.0, -1.0);
-
-        for(auto joint : ioBody->joints()) {
-            joint->setActuationMode(JointTorque);
-            io->enableOutput(joint, JointTorque);
-            io->enableInput(joint, JointAngle | JointVelocity | JointTorque);
-        }
-        io->enableInput(ioBody->rootLink(), LinkPosition | LinkTwist);
-
-        // command
-        command = Vector3d(0.0, 0.0, 0.0);
-        phase = 0;
-
-        // find the cfgs file
-        const char *inference_target_path_str = std::getenv("TARGET_PATH");
-        if(!inference_target_path_str){
-            oss << " TARGET_PATH environment variable is not set!!!";
-            MessageView::instance()->putln(oss.str());
-            return false;
-        }
-        fs::path inference_target_path = fs::path(inference_target_path_str);
+        fs::path inference_target_path = fs::path(target_path);
         fs::path cfgs_path = inference_target_path / fs::path("cfgs.yaml");
         if (!fs::exists(cfgs_path)) {
             oss << cfgs_path << " is not found!!!";
             MessageView::instance()->putln(oss.str());
-            return false;
+            return;
         }
 
         // load configs
@@ -117,6 +79,7 @@ public:
         P_gain = 45;
         D_gain = 5;
 
+        size_t resample_interval_steps;
         resample_interval_steps = static_cast<int>(std::round(env_cfg->get("resampling_time_s", 4.0) / dt));
 
         // joint values
@@ -148,7 +111,7 @@ public:
         }
 
         // use default_dof_pos for initializing target angles
-        target_dof_pos = default_dof_pos;
+        // target_dof_pos = default_dof_pos;
         // target_dof_pos_prev = default_dof_pos;
         // target_dof_vel = VectorXd::Zero(num_actions);
 
@@ -179,30 +142,14 @@ public:
         if (!fs::exists(model_path)) {
             oss << model_path << " is not found!!!";
             MessageView::instance()->putln(oss.str());
-            return false;
+            // return false;
         }
         // model = torch::jit::load(model_path); // CUDA
         // model.to(torch::kCUDA);
         model = torch::jit::load(model_path, torch::kCPU); // CPU
         model.to(torch::kCPU);
         model.eval();
-
-        YAMLReader ck_reader;
-        auto ck_root = ck_reader.loadDocument(std::filesystem::path(__FILE__).parent_path().string() + "/checkpoints.yaml")->toMapping()->findListing("checkpoints");
-        checkpoints.clear();
-        for (int i = 0; i < ck_root->size(); i++){
-            Checkpoint ck_data;
-            ck_data.x = ck_root->at(i)->toMapping()->get("x", 0.0);
-            ck_data.y = ck_root->at(i)->toMapping()->get("y", 0.0);
-            ck_data.lin = ck_root->at(i)->toMapping()->get("lin", 1.0);
-            ck_data.ang = ck_root->at(i)->toMapping()->get("ang", 0.8);
-            ck_data.threshold = ck_root->at(i)->toMapping()->get("threshold", 0.1);
-            checkpoints.push_back(ck_data);
-        }
-
-        return true;
     }
-
     bool inference(VectorXd& target_dof_pos, const Vector3d& angular_velocity, const Vector3d& projected_gravity, const VectorXd& joint_pos, const VectorXd& joint_vel, const VectorXd& joint_force) {
         try {
             // observation vector
@@ -241,9 +188,89 @@ public:
         return true;
     }
 
+
+};
+class InferenceController1 : public SimpleController
+{
+    Body* ioBody;
+    double dt;
+    double inference_dt = 0.02; // genesis dt is 0.02 sec
+    size_t inference_interval_steps;
+
+    std::unique_ptr<InferenceModel> inf_walking, inf_jump;
+
+    // Command resampling
+    int phase = 0;
+    std::vector<Checkpoint> checkpoints;
+    size_t step_count = 0;
+
+    VectorXd target_dof_pos;
+
+public:
+    virtual bool initialize(SimpleControllerIO* io) override
+    {
+        dt = io->timeStep();
+        ioBody = io->body();
+
+        inference_interval_steps = static_cast<int>(std::round(inference_dt / dt));
+        std::ostringstream oss;
+        oss << "inference_interval_steps: " << inference_interval_steps;
+        MessageView::instance()->putln(oss.str());
+
+        global_gravity = Vector3(0.0, 0.0, -1.0);
+
+        for(auto joint : ioBody->joints()) {
+            joint->setActuationMode(JointTorque);
+            io->enableOutput(joint, JointTorque);
+            io->enableInput(joint, JointAngle | JointVelocity | JointTorque);
+        }
+        io->enableInput(ioBody->rootLink(), LinkPosition | LinkTwist);
+
+        // command
+        command = Vector3d(0.0, 0.0, 0.0);
+        phase = 0;
+
+        // find the cfgs file
+        const char *inference_target_path_str = std::getenv("WALKING_TARGET_PATH");
+        if(!inference_target_path_str){
+            oss << " WALKING_TARGET_PATH environment variable is not set!!!";
+            MessageView::instance()->putln(oss.str());
+            return false;
+        }
+        inf_walking = std::unique_ptr<InferenceModel>(new InferenceModel(inference_target_path_str, dt));
+
+        inference_target_path_str = std::getenv("JUMP_TARGET_PATH");
+        if(!inference_target_path_str){
+            oss << " JUMP_TARGET_PATH environment variable is not set!!!";
+            MessageView::instance()->putln(oss.str());
+            return false;
+        }
+        inf_jump = std::unique_ptr<InferenceModel>(new InferenceModel(inference_target_path_str, dt));
+
+        target_dof_pos = inf_walking->default_dof_pos;
+
+        YAMLReader ck_reader;
+        auto ck_root = ck_reader.loadDocument(std::filesystem::path(__FILE__).parent_path().string() + "/checkpoints.yaml")->toMapping()->findListing("checkpoints");
+        checkpoints.clear();
+        for (int i = 0; i < ck_root->size(); i++){
+            Checkpoint ck_data;
+            ck_data.x = ck_root->at(i)->toMapping()->get("x", 0.0);
+            ck_data.y = ck_root->at(i)->toMapping()->get("y", 0.0);
+            ck_data.lin = ck_root->at(i)->toMapping()->get("lin", 1.0);
+            ck_data.ang = ck_root->at(i)->toMapping()->get("ang", 0.8);
+            ck_data.threshold = ck_root->at(i)->toMapping()->get("threshold", 0.1);
+            ck_data.jump = ck_root->at(i)->toMapping()->get("jump", false);
+            checkpoints.push_back(ck_data);
+        }
+
+        return true;
+    }
+
     virtual bool control() override
     {
         auto ck = checkpoints.at(phase);
+        InferenceModel *inf = ck.jump ? inf_jump.get() : inf_walking.get();
+
         double actual_x = ioBody->rootLink()->translation()[0];
         double actual_y = ioBody->rootLink()->translation()[1];
         Vector3d actual_rot_vec = (ioBody->rootLink()->rotation() * Vector3d{1, 0, 0});
@@ -266,9 +293,9 @@ public:
         }
 
         double distance = std::sqrt(diff_x * diff_x + diff_y * diff_y);
-        command[2] = std::clamp(ang_vel_range[1] * 4 * distance * diff_yaw, ang_vel_range[0]*ck.ang, ang_vel_range[1]*ck.ang);
-        command[0] = std::clamp(lin_vel_x_range[1] * ck.lin / (1 + 10 * std::abs(command[2])), lin_vel_x_range[0]*ck.lin, lin_vel_x_range[1]*ck.lin);
-        command[1] = std::clamp(0.0, lin_vel_y_range[0]*ck.lin, lin_vel_y_range[1]*ck.lin);
+        command[2] = std::clamp(inf->ang_vel_range[1] * 4 * distance * diff_yaw, inf->ang_vel_range[0]*ck.ang, inf->ang_vel_range[1]*ck.ang);
+        command[0] = std::clamp(inf->lin_vel_x_range[1] * ck.lin / (1 + 10 * std::abs(command[2])), inf->lin_vel_x_range[0]*ck.lin, inf->lin_vel_x_range[1]*ck.lin);
+        command[1] = 0.0;
         std::cout << "phase: " << phase << ", command velocity:" << command.transpose() << std::endl;
         // std::cout << ck.x << ", " << ck.y << ", " << ck.lin << ", " << ck.ang << ", " << ck.threshold << std::endl;
         // MessageView::instance()->putln(oss.str());
@@ -279,9 +306,9 @@ public:
         Vector3 angular_velocity = root_coord.linear().transpose() * rootLink->w();
         Vector3 projected_gravity = root_coord.linear().transpose() * global_gravity;
 
-        VectorXd joint_pos(num_actions), joint_vel(num_actions), joint_force(num_actions);
-        for(int i=0; i<num_actions; ++i){
-            auto joint = ioBody->joint(motor_dof_names[i]);
+        VectorXd joint_pos(inf->num_actions), joint_vel(inf->num_actions), joint_force(inf->num_actions);
+        for(int i=0; i<inf->num_actions; ++i){
+            auto joint = ioBody->joint(inf->motor_dof_names[i]);
             joint_pos[i] = joint->q();
             joint_vel[i] = joint->dq();
             joint_force[i] = joint->u(); // todo: たぶん力センサーを別で用意しないといけない?
@@ -289,14 +316,15 @@ public:
 
         // inference
         if (step_count % inference_interval_steps == 0) {
-            inference(target_dof_pos, angular_velocity, projected_gravity, joint_pos, joint_vel, joint_force);
+            target_dof_pos = inf->default_dof_pos;
+            inf->inference(target_dof_pos, angular_velocity, projected_gravity, joint_pos, joint_vel, joint_force);
             // target_dof_vel = (target_dof_pos - target_dof_pos_prev) / inference_dt;
             // target_dof_pos_prev = target_dof_pos;
         }
 
         // set target outputs
-        for(int i=0; i<num_actions; ++i) {
-            auto joint = ioBody->joint(motor_dof_names[i]);
+        for(int i=0; i<inf->num_actions; ++i) {
+            auto joint = ioBody->joint(inf->motor_dof_names[i]);
             // double q = joint->q();
             // double dq = joint->dq();
             // double u = P_gain * (target_dof_pos[i] - q) + D_gain * (target_dof_vel[i] - dq);
@@ -304,12 +332,12 @@ public:
             double u = target_dof_pos[i];
             joint->u() = u;
         }
-        for(int i=0; i<pd_motor_dof_names.size(); ++i) {
-            auto joint = ioBody->joint(pd_motor_dof_names[i]);
+        for(int i=0; i<inf->pd_motor_dof_names.size(); ++i) {
+            auto joint = ioBody->joint(inf->pd_motor_dof_names[i]);
             double q = joint->q();
             double dq = joint->dq();
-            // double u = P_gain * (pd_default_dof_pos[i] - q) + D_gain * (target_dof_vel[i] - dq);
-            double u = P_gain * (pd_default_dof_pos[i] - q) + D_gain * (- dq);
+            // double u = inf->P_gain * (pd_default_dof_pos[i] - q) + inf->D_gain * (target_dof_vel[i] - dq);
+            double u = inf->P_gain * (inf->pd_default_dof_pos[i] - q) + inf->D_gain * (- dq);
             joint->u() = u;
         }
         

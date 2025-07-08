@@ -151,6 +151,10 @@ class Go2Env:
         # target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
         # self.robot.control_dofs_position(target_dof_pos, self.motor_dofs)
         self.robot.control_dofs_force(exec_actions * self.output_factor, self.motor_dofs)
+        # p = 70
+        # d = 10
+        # u = p * (0 - self.dof_pos[:, :]) + d * (0 - self.dof_vel[:, :])
+        # self.robot.control_dofs_force(u, self.motor_dofs)
         if random.random() < 0.001 and self.env_cfg["random_move_z"]:
             random_pos = self.robot.get_pos()[...]
             random_pos[:, 2] += gs_rand_float(*self.env_cfg["random_move_z"], (len(random_pos),), self.device)
@@ -257,6 +261,9 @@ class Go2Env:
         # reset dofs
         self.dof_pos[envs_idx] = self.default_dof_pos
         self.dof_vel[envs_idx] = 0.0
+        if self.env_cfg.get("jump"):
+            self.dof_pos[envs_idx, :8] += gs_rand_float(-0.2, 0.2, (len(envs_idx), 8), self.device)
+            self.dof_vel[envs_idx, :8] += gs_rand_float(-0.2, 0.2, (len(envs_idx), 8), self.device)
         self.dof_force[envs_idx] = 0.0
         self.robot.set_dofs_position(
             position=self.dof_pos[envs_idx],
@@ -369,10 +376,10 @@ class Go2Env:
         return torch.exp(-torch.var(long_dofs_normalized, dim=1)) - 1
 
     def _reward_tracking_jump_pd(self):
-        p = 40
-        d = 2
+        p = 70
+        d = 10
         u = p * (0 - self.dof_pos[:, 8:]) + d * (0 - self.dof_vel[:, 8:])
-        return -torch.sum(torch.abs(self.actions[:, 8:] * self.output_factor - u), dim=1) * (self.base_pos[:, 2] < 0.7) + 1600
+        return -torch.sum(torch.abs(self.actions[:, 8:] * self.output_factor - u), dim=1) * (self.base_pos[:, 2] < 0.7) + 3200
 
     def _reward_tracking_jump_vel(self):
         lin_vel_error = torch.square(0.5 - torch.tanh(100 * self.base_lin_vel[:, 2]) * torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))

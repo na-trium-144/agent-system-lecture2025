@@ -61,3 +61,8 @@ checkpoints:
   - x: 13.8
     y: -1.0
     lin: 0.8
+  - x: 20
+    y: -1.0
+    lin: 0
+    ang: 0
+    jump: true

@@ -69,5 +69,5 @@ catkin build
 
 ```sh
 source ~/ros/agent_system_ws/devel/setup.bash
-TARGET_PATH=`pwd`/logs/go2-walking/test LANG=C.utf-8 LC_ALL=C.utf-8 choreonoid ./framy.cnoid
+ WALKING_TARGET_PATH=`pwd`/logs/walking_only/framy5 JUMP_TARGET_PATH=`pwd`/logs/jump/all LANG=C.utf-8 LC_ALL=C.utf-8 choreonoid ./framy.cnoid
 ```
