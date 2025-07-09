@@ -19,7 +19,7 @@ checkpoints:
     lin: 0.4
   - x: 7.55
     y: 1.78
-    lin: 0.4
+    lin: 0.3
   - x: 8.06
     y: 1.85
     lin: 0.3
@@ -35,7 +35,7 @@ checkpoints:
     lin: 0.3
     # threshold: 0.2
   - x: 9.84
-    y: 1.6
+    y: 1.65
     lin: 0.3
     # threshold: 0.2
   - x: 10.29

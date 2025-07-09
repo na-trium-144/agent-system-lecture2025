@@ -24,14 +24,14 @@ items:
           data:
             file: "framy.urdf"
             format: URDF
-            rootPosition: [ nan, nan, nan ]
+            rootPosition: [ -nan, -nan, -nan ]
             rootAttitude: [
-              nan, nan, nan,
-              nan, nan, nan,
-              nan, nan, nan ]
+              -nan, -nan, -nan,
+              -nan, -nan, -nan,
+              -nan, -nan, -nan ]
             jointDisplacements: [
-              nan, nan, nan, nan, nan, nan, nan, nan, -nan, -nan,
-              -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan, nan ]
+              -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan,
+              -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan, -nan ]
             initialJointDisplacements: [
               0, 0, 0, 0, 0, 0, 0, 0, 90, -180,
               180, -180, 180, -180, 180, -180, 180, -180, 180, -180 ]
@@ -64,7 +64,7 @@ items:
                 reloading: false
                 export_symbols: false
         -
-          id: 4
+          id: 5
           name: "HVAC2023_athletics_field"
           plugin: Body
           class: BodyItem
@@ -77,7 +77,7 @@ items:
               1, 0, 0,
               0, 1, 0,
               0, 0, 1 ]
-            jointDisplacements: [ 1.85661e-14, 0, 1.21189e-14, 0, -1.58829e-14 ]
+            jointDisplacements: [ 8.26362e-15, 0, 3.58918e-15, 0, -6.67371e-15 ]
             initialJointDisplacements: [ 0, 0, 0, 0, 0 ]
             initialRootPosition: [ 0, 0, 0 ]
             initialRootAttitude: [
@@ -91,10 +91,11 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 5
+          id: 7
           name: "AISTSimulator"
           plugin: Body
           class: AISTSimulatorItem
+          is_selected: true
           data:
             time_step: 0.001
             realtime_sync_mode: compensatory
@@ -108,6 +109,7 @@ items:
             record_collision_data: false
             controller_options: ""
             block_scene_view_edit_mode: false
+            time_sync_items: [ 4, 6 ]
             dynamicsMode: "Forward dynamics"
             integrationMode: semi-implicit_euler
             gravity: [ 0, 0, -9.80665 ]
@@ -124,7 +126,7 @@ items:
             oldAccelSensorMode: false
           children:
             -
-              id: 6
+              id: 8
               name: "WorldLogFile"
               plugin: Body
               class: WorldLogFileItem
@@ -134,7 +136,7 @@ items:
                 timeStampSuffix: true
                 recordingFrameRate: 15
         -
-          id: 7
+          id: 9
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -159,7 +161,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 8
+          id: 10
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -183,7 +185,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 9
+          id: 11
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -208,7 +210,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 10
+          id: 12
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -233,7 +235,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 11
+          id: 13
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -258,7 +260,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 12
+          id: 14
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -283,7 +285,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 13
+          id: 15
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -308,7 +310,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 14
+          id: 16
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -333,7 +335,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 15
+          id: 17
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -358,7 +360,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 16
+          id: 18
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -383,20 +385,21 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 17
+          id: 19
           name: "Marker"
           plugin: Body
           class: BodyItem
+          is_selected: true
           is_checked: true
           data:
             file: "marker.body"
             format: CHOREONOID-BODY
-            rootPosition: [ 9.84, 1.6, 0 ]
+            rootPosition: [ 9.84, 1.65, 0 ]
             rootAttitude: [
               1, 0, 0,
               0, 1, 0,
               0, 0, 1 ]
-            initialRootPosition: [ 9.84, 1.6, 0 ]
+            initialRootPosition: [ 9.84, 1.65, 0 ]
             initialRootAttitude: [
               1, 0, 0,
               0, 1, 0,
@@ -408,7 +411,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 18
+          id: 20
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -433,7 +436,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 19
+          id: 21
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -458,7 +461,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 20
+          id: 22
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -483,7 +486,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 21
+          id: 23
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -508,7 +511,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 22
+          id: 24
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -533,11 +536,10 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 23
+          id: 25
           name: "Marker"
           plugin: Body
           class: BodyItem
-          is_selected: true
           is_checked: true
           data:
             file: "marker.body"
@@ -559,7 +561,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 24
+          id: 26
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -584,7 +586,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 25
+          id: 27
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -609,7 +611,7 @@ items:
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
         -
-          id: 26
+          id: 28
           name: "Marker"
           plugin: Body
           class: BodyItem
@@ -644,7 +646,7 @@ views:
     class: ItemTreeView
     mounted: true
     state:
-      expanded: [ 1, 2, 3, 4, 5 ]
+      expanded: [ 1, 2, 3, 5, 7 ]
   -
     id: 2
     plugin: Base
@@ -676,7 +678,7 @@ views:
         -
           camera: [ System, Perspective ]
           isCurrent: true
-          eye: [ 11.9263, 3.63444, 3.59242 ]
+          eye: [ 10.5708, 6.89575, 6.82212 ]
           direction: [ -0.064234, -0.659101, -0.749306 ]
           up: [ -0.0726808, -0.745773, 0.662224 ]
         -
@@ -759,7 +761,7 @@ views:
     mounted: true
 toolbars:
   "TimeBar":
-    current_time: 74.756
+    current_time: 49.528
     min_time: 0
     max_time: 83.459
     frame_rate: 1000
@@ -782,7 +784,7 @@ toolbars:
     lazyCollisionDetectionMode: true
 Body:
   "BodySelectionManager":
-    current_body_item: 23
+    current_body_item: 19
     current_link: "marker"
   "KinematicFaultChecker":
     checkJointPositions: true
@@ -801,17 +803,7 @@ Body:
         show_cm_projection: false
         show_zmp: false
       -
-        body_item: 4
-        show_cm: false
-        show_cm_projection: false
-        show_zmp: false
-      -
-        body_item: 7
-        show_cm: false
-        show_cm_projection: false
-        show_zmp: false
-      -
-        body_item: 8
+        body_item: 5
         show_cm: false
         show_cm_projection: false
         show_zmp: false
@@ -905,6 +897,16 @@ Body:
         show_cm: false
         show_cm_projection: false
         show_zmp: false
+      -
+        body_item: 27
+        show_cm: false
+        show_cm_projection: false
+        show_zmp: false
+      -
+        body_item: 28
+        show_cm: false
+        show_cm_projection: false
+        show_zmp: false
   "SplineFilterDialog":
     isInputFrameRateSpecified: false
     inputFrameRate: 200
@@ -917,17 +919,17 @@ viewAreas:
     contents:
       type: splitter
       orientation: horizontal
-      sizes: [ 1455, 461 ]
+      sizes: [ 1163, 369 ]
       children:
         -
           type: splitter
           orientation: horizontal
-          sizes: [ 377, 1074 ]
+          sizes: [ 301, 858 ]
           children:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 450, 450 ]
+              sizes: [ 416, 416 ]
               children:
                 -
                   type: pane
@@ -939,7 +941,7 @@ viewAreas:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 675, 225 ]
+              sizes: [ 624, 208 ]
               children:
                 -
                   type: pane
@@ -951,7 +953,7 @@ viewAreas:
         -
           type: splitter
           orientation: vertical
-          sizes: [ 210, 690 ]
+          sizes: [ 194, 638 ]
           children:
             -
               type: pane
@@ -959,7 +961,7 @@ viewAreas:
             -
               type: splitter
               orientation: vertical
-              sizes: [ 300, 386 ]
+              sizes: [ 277, 357 ]
               children:
                 -
                   type: pane
