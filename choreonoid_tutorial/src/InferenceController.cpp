@@ -338,8 +338,8 @@ public:
             // double dq = joint->dq();
             // double u = P_gain * (target_dof_pos[i] - q) + D_gain * (target_dof_vel[i] - dq);
             // double u = P_gain * (target_dof_pos[i] - q) + D_gain * (- dq);
-            double u = target_dof_pos[i] * inf->action_scale_2;
-            // double u = target_dof_pos[i] * (1 + (inf->action_scale_2 - 1) * (1 - std::exp(jump_count / 100.0)));
+            // double u = target_dof_pos[i] * inf->action_scale_2;
+            double u = target_dof_pos[i] * (1 + (inf->action_scale_2 - 1) * (1 - std::exp(jump_count / 300.0)));
             joint->u() = u;
         }
         for(int i=0; i<inf->pd_motor_dof_names.size(); ++i) {
