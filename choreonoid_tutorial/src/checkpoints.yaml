@@ -1,4 +1,7 @@
-checkpoints:
+shorttrack: &shorttrack
+  - x: 22
+    y: 0
+athletics: &athletics
   - x: 0.5
     y: 0.7
     # lin: 0.4
@@ -66,3 +69,5 @@ checkpoints:
     lin: 0
     ang: 0
     jump: true
+
+checkpoints: *athletics
