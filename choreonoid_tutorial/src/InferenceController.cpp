@@ -42,6 +42,7 @@ struct InferenceModel {
     double D_gain;
     int num_actions;
     double action_scale;
+    double action_scale_2;
     double ang_vel_scale;
     double lin_vel_scale;
     double dof_pos_scale;
@@ -117,6 +118,7 @@ struct InferenceModel {
 
         // scales
         action_scale = env_cfg->get("action_scale", 1.0);
+        action_scale_2 = env_cfg->get("action_scale_2", 1.0);
 
         // obs_cfg
         ang_vel_scale = obs_cfg->findMapping("obs_scales")->get("ang_vel", 1.0);
@@ -203,6 +205,7 @@ class InferenceController1 : public SimpleController
     int phase = 0;
     std::vector<Checkpoint> checkpoints;
     size_t step_count = 0;
+    int jump_count = 0;
 
     VectorXd target_dof_pos;
 
@@ -317,6 +320,9 @@ public:
         }
 
         // inference
+        if(inf_prev != inf){
+            jump_count = 0;
+        }
         if (inf_prev != inf || step_count % inference_interval_steps == 0) {
             target_dof_pos = inf->default_dof_pos;
             inf->inference(target_dof_pos, angular_velocity, projected_gravity, joint_pos, joint_vel, joint_force);
@@ -332,7 +338,8 @@ public:
             // double dq = joint->dq();
             // double u = P_gain * (target_dof_pos[i] - q) + D_gain * (target_dof_vel[i] - dq);
             // double u = P_gain * (target_dof_pos[i] - q) + D_gain * (- dq);
-            double u = target_dof_pos[i];
+            double u = target_dof_pos[i] * inf->action_scale_2;
+            // double u = target_dof_pos[i] * (1 + (inf->action_scale_2 - 1) * (1 - std::exp(jump_count / 100.0)));
             joint->u() = u;
         }
         for(int i=0; i<inf->pd_motor_dof_names.size(); ++i) {
@@ -346,6 +353,7 @@ public:
         
 
         ++step_count;
+        ++jump_count;
 
         return true;
     }
