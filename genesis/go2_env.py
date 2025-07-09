@@ -198,6 +198,8 @@ class Go2Env:
         self.reset_buf = self.episode_length_buf > self.max_episode_length
         self.reset_buf |= torch.abs(self.base_euler[:, 1]) > self.env_cfg["termination_if_pitch_greater_than"]
         self.reset_buf |= torch.abs(self.base_euler[:, 0]) > self.env_cfg["termination_if_roll_greater_than"]
+        if self.env_cfg.get("jump"):
+            self.reset_buf |= self.base_pos[:, 2] < 0.3
         self.reset_buf |= torch.isnan(self.base_pos).any(dim=1)
         self.reset_buf |= (torch.abs(self.base_pos) > 100).any(dim=1)
         self.reset_buf |= torch.isnan(self.dof_pos).any(dim=1)
@@ -375,6 +377,10 @@ class Go2Env:
         long_dofs_normalized = long_dofs * torch.tensor([1, -1, 1, -1, 1, -1, 1, -1, 1, -1], device=self.device)
         return torch.exp(-torch.var(long_dofs_normalized, dim=1)) - 1
 
+    def _reward_tracking_jump_action_ang2(self):
+        angle = self.dof_pos[:, 8] - self.default_dof_pos[8] + (self.base_euler[:, 1] / 180 * math.pi)
+        return (torch.exp(-torch.abs(angle) / 0.1) - 1) * (self.base_pos[:, 2] < 1)
+
     def _reward_tracking_jump_pd(self):
         p = 70
         d = 10
@@ -390,7 +396,7 @@ class Go2Env:
         wall_origin[:, 0] -= 1
         wall_origin[:, 2] -= 1
         radius_error = torch.square(2.0 - torch.sqrt(torch.sum(torch.square(self.base_pos[:, :] - wall_origin), dim=1)))
-        return torch.exp(-radius_error / 0.2) - 1
+        return torch.exp(-radius_error / 0.2) * (self.base_pos[:, 2] > 1) # - 1
 
     def _reward_lin_vel_z(self):
         # Penalize z axis base linear velocity

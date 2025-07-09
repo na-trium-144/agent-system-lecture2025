@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   # image_transport
   choreonoid
   )
+add_compile_options(-g)
 
 # generate ros messages
 add_message_files(

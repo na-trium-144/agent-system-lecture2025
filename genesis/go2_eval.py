@@ -1,7 +1,7 @@
 import argparse
 import os
 import pickle
-
+import math
 import torch
 from go2_env import Go2Env
 from rsl_rl.runners import OnPolicyRunner
@@ -49,6 +49,8 @@ def main():
             # print("rew_base_height:", env._reward_base_height())
             # print(env.dof_pos[0, 9:19])
             # print("rew_jump_action_ang:", env._reward_tracking_jump_action_ang())
+            # print(env.dof_pos[:, 8] - env.default_dof_pos[8], env.base_euler[:, 1] / 180 * math.pi)
+            # print(env.robot.get_dofs_position(env.pd_motor_dofs)[:, 0] - env.pd_default_dof_pos[0], env.base_euler[:, 1] / 180 * math.pi)
 
 
 if __name__ == "__main__":

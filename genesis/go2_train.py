@@ -127,6 +127,7 @@ def get_cfgs(exp_name: str):
                 "tracking_jump_z": 2.0,
                 # "tracking_jump_action": 10.0,
                 "tracking_jump_action_ang": 10.0,
+                "tracking_jump_action_ang2": 3.0,
                 # "tracking_jump_vel": 2.0,
                 "tracking_jump_traj": 3.0,
                 "action_rate": -0.002,

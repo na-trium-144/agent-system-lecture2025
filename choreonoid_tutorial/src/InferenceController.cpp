@@ -206,6 +206,8 @@ class InferenceController1 : public SimpleController
 
     VectorXd target_dof_pos;
 
+    InferenceModel *inf_prev = nullptr;
+
 public:
     virtual bool initialize(SimpleControllerIO* io) override
     {
@@ -315,12 +317,13 @@ public:
         }
 
         // inference
-        if (step_count % inference_interval_steps == 0) {
+        if (inf_prev != inf || step_count % inference_interval_steps == 0) {
             target_dof_pos = inf->default_dof_pos;
             inf->inference(target_dof_pos, angular_velocity, projected_gravity, joint_pos, joint_vel, joint_force);
             // target_dof_vel = (target_dof_pos - target_dof_pos_prev) / inference_dt;
             // target_dof_pos_prev = target_dof_pos;
         }
+        inf_prev = inf;
 
         // set target outputs
         for(int i=0; i<inf->num_actions; ++i) {
