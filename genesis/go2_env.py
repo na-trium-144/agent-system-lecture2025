@@ -150,7 +150,7 @@ class Go2Env:
         exec_actions = self.last_actions if self.simulate_action_latency else self.actions
         # target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
         # self.robot.control_dofs_position(target_dof_pos, self.motor_dofs)
-        self.robot.control_dofs_force(exec_actions * self.output_factor, self.motor_dofs)
+        self.robot.control_dofs_force(exec_actions * self.env_cfg.get("action_scale_2", 1) * self.output_factor, self.motor_dofs)
         # p = 70
         # d = 10
         # u = p * (0 - self.dof_pos[:, :]) + d * (0 - self.dof_vel[:, :])
@@ -385,7 +385,7 @@ class Go2Env:
         p = 70
         d = 10
         u = p * (0 - self.dof_pos[:, 8:]) + d * (0 - self.dof_vel[:, 8:])
-        return -torch.sum(torch.abs(self.actions[:, 8:] * self.output_factor - u), dim=1) * (self.base_pos[:, 2] < 0.7) + 3200
+        return -torch.sum(torch.abs(self.actions[:, 8:] * self.env_cfg.get("action_scale_2", 1) * self.output_factor - u), dim=1) * (self.base_pos[:, 2] < 0.7) + 3200
 
     def _reward_tracking_jump_vel(self):
         lin_vel_error = torch.square(0.5 - torch.tanh(100 * self.base_lin_vel[:, 2]) * torch.sqrt(torch.sum(torch.square(self.base_lin_vel[:, :]), dim=1)))
