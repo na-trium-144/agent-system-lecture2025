@@ -104,6 +104,7 @@ def get_cfgs(exp_name: str):
         "episode_length_s": 5.0 if "jump" in exp_name else 40.0,
         "resampling_time_s": 4.0,
         "action_scale": 0.25,
+        "action_scale_2": 100 if "jump" in exp_name else 1,
         "simulate_action_latency": True,
         "clip_actions": 100.0,
     }
